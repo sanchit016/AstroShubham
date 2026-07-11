@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String
+  phone     String?
+  createdAt DateTime  @default(now())
+  bookings  Booking[]
+}
+
+model TimeSlot {
+  id        String   @id @default(uuid())
+  startTime DateTime // UTC timestamp
+  endTime   DateTime // UTC timestamp
+  isBooked  Boolean  @default(false)
+  booking   Booking?
+}
+
+model Booking {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  timeSlotId    String        @unique
+  timeSlot      TimeSlot      @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+  
+  // Birth details
+  birthDate     DateTime
+  birthTime     String        // e.g. "14:30"
+  birthPlace    String
+  gender        String
+  notes         String?
+  
+  // Payment Details
+  orderId       String        @unique // Razorpay Order ID
+  paymentId     String?       // Razorpay Payment ID after successful transaction
+  paymentStatus PaymentStatus @default(PENDING)
+  amountPaid    Float
+  currency      String
+  
+  createdAt     DateTime      @default(now())
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
