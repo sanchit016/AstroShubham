@@ -20,7 +20,7 @@ export default function Home() {
 
       <main>
         {/* HERO SECTION */}
-        <section className="hero" style={{ minHeight: "90vh", display: "flex", alignItems: "center", padding: "120px 0 60px 0" }}>
+        <section aria-label="Hero" className="hero" style={{ minHeight: "90vh", display: "flex", alignItems: "center", padding: "120px 0 60px 0" }}>
           <div className="nebula-glow-1" />
           <div className="container hero-grid">
             <div className="hero-content" style={{ gap: "1rem" }}>
@@ -294,7 +294,7 @@ export default function Home() {
         </section>
 
         {/* ABOUT SECTION */}
-        <section id="about" className="section" style={{ background: "rgba(10, 7, 20, 0.3)", padding: "6rem 0" }}>
+        <section id="about" aria-label="About Shubham Chhabra" className="section" style={{ background: "rgba(10, 7, 20, 0.3)", padding: "6rem 0" }}>
           <div className="nebula-glow-2" />
           <div className="container about-grid">
             <div className="glass-card" style={{ padding: "0.5rem", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -330,7 +330,7 @@ export default function Home() {
         </section>
 
         {/* BOOKING SECTION */}
-        <section id="book" className="section" style={{ padding: "6rem 0" }}>
+        <section id="book" aria-label="Book a consultation" className="section" style={{ padding: "6rem 0" }}>
           <div className="container">
             <h2 style={{ fontSize: "2rem", marginBottom: "3rem" }}>Schedule Consultation</h2>
             <BookingWidget />
@@ -338,7 +338,50 @@ export default function Home() {
         </section>
 
         {/* FAQ SECTION */}
-        <section id="faq" className="section" style={{ background: "rgba(10, 7, 20, 0.3)", padding: "6rem 0" }}>
+        <section id="faq" aria-label="Frequently Asked Questions" className="section" style={{ background: "rgba(10, 7, 20, 0.3)", padding: "6rem 0" }}>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: [
+                  {
+                    "@type": "Question",
+                    name: "What is the difference between the plans?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "The General Plan ($25 / ₹1,999) is for individual queries where you can ask any number of questions regarding career, health, or family. The Couple/Matching Plan ($40 / ₹2,999) is a double-chart reading specifically optimized for marriage matching (Gun Milan) and relationship consultation involving two profiles.",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "What details are required for the session?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "You will need to provide your exact Birth Date, Birth Time, and Birth Place. For couple compatibility readings, providing birth parameters for both partners is recommended.",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "How do the live consultations take place?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "Consultations are conducted online via Google Meet. A dynamic calendar invite and video link will be sent to your email address automatically upon scheduling.",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "Can I change my scheduled slot later?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "Yes, you can request a reschedule up to 24 hours in advance by replying to your confirmation email or contacting support@astroshubham.com.",
+                    },
+                  },
+                ],
+              }),
+            }}
+          />
           <div className="container" style={{ maxWidth: "750px" }}>
             <h2 style={{ fontSize: "2rem", marginBottom: "3rem" }}>Frequently Asked Questions</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
