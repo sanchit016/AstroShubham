@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { mockDb } from "@/lib/mockDb";
 import { googleCalendar } from "@/lib/googleCalendar";
 import { sendBookingConfirmation } from "@/lib/email";
-import { finalizeBooking, releaseBookingSlot } from "@/lib/bookingService";
+import { finalizeBooking, releaseBookingSlot, getPackageNameByPrice } from "@/lib/bookingService";
 
 export async function POST(req: Request) {
   try {
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
         if (googleCalendar.isConfigured()) {
           try {
             console.log("Mock payment verified. Syncing booking to Google Calendar...");
-            const packageId = mockBooking.amountPaid === 40 || mockBooking.amountPaid === 2999 ? "marriage" : "general";
+            const packageId = getPackageNameByPrice(mockBooking.amountPaid, mockBooking.currency);
             const result = await googleCalendar.bookSlot(mockBooking.timeSlotId, {
               name: mockBooking.user.name,
               email: mockBooking.user.email,

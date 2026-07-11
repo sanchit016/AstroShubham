@@ -5,10 +5,10 @@ import { sendBookingConfirmation } from "@/lib/email";
 // Helper to resolve package name by price and currency
 export function getPackageNameByPrice(price: number, currency: string): string {
   if (currency === "INR") {
-    if (price === 1999 || price === 1) return "General Consultation (Unlimited Questions)";
+    if (price === 1999) return "General Consultation (Unlimited Questions)";
     if (price === 2999) return "Marriage Match & Couple Consultation";
   } else {
-    if (price === 25 || price === 1) return "General Consultation (Unlimited Questions)";
+    if (price === 25) return "General Consultation (Unlimited Questions)";
     if (price === 40) return "Marriage Match & Couple Consultation";
   }
   return "Premium Astrology Consultation";

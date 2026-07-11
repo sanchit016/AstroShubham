@@ -5,9 +5,9 @@ import { mockDb } from "@/lib/mockDb";
 import { googleCalendar } from "@/lib/googleCalendar";
 
 const PACKAGES: Record<string, { title: string; priceINR: number; priceUSD: number }> = {
-  general: { title: "General Consultation (Unlimited Questions)", priceINR: 1, priceUSD: 1 },
-  marriage: { title: "Marriage Match & Couple Consultation", priceINR: 1, priceUSD: 1 },
-  career: { title: "General Consultation (Unlimited Questions)", priceINR: 1, priceUSD: 1 },
+  general: { title: "General Consultation (Unlimited Questions)", priceINR: 1999, priceUSD: 25 },
+  marriage: { title: "Marriage Match & Couple Consultation", priceINR: 2999, priceUSD: 40 },
+  career: { title: "General Consultation (Unlimited Questions)", priceINR: 1999, priceUSD: 25 },
 };
 
 export async function POST(req: Request) {

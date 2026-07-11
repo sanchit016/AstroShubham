@@ -16,16 +16,16 @@ const PACKAGES: Package[] = [
   {
     id: "general",
     title: "General Consultation (Unlimited Questions)",
-    priceINR: 1,
-    priceUSD: 1,
+    priceINR: 1999,
+    priceUSD: 25,
     duration: "45 Minutes",
     description: "Connect for a private consultation to discuss all your life aspects (Career, Health, Family, etc.). Ask any number of questions.",
   },
   {
     id: "marriage",
     title: "Marriage Match & Couple Consultation",
-    priceINR: 1,
-    priceUSD: 1,
+    priceINR: 2999,
+    priceUSD: 40,
     duration: "60 Minutes",
     description: "Detailed Vedic & Lal Kitab compatibility reading for couples. Includes Gun Milan, planetary charts comparison, and Venus/7th house adjustments.",
   },
@@ -384,51 +384,6 @@ export default function BookingWidget() {
     } catch (err: any) {
       console.error("Error in submission flow:", err);
       setErrorMessage(err.message || "An unexpected error occurred.");
-      setSubmitting(false);
-    }
-  };
-
-  const handleBypassPayment = async () => {
-    setSubmitting(true);
-    setErrorMessage("");
-    try {
-      const res = await fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          packageId: selectedPackage.id,
-          timeSlotId: selectedSlotId,
-          currency,
-          ...formData,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        setErrorMessage(data.error || "Booking submission failed.");
-        setSubmitting(false);
-        return;
-      }
-
-      const verifyRes = await fetch("/api/verify-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          razorpay_order_id: data.razorpayOrderId,
-          razorpay_payment_id: `pay_mock_${Date.now()}`,
-          razorpay_signature: "mock_signature",
-        }),
-      });
-      const verifyData = await verifyRes.json();
-      if (verifyData.success) {
-        setStep(5); // Success step!
-      } else {
-        setErrorMessage(verifyData.error || "Payment validation failed.");
-      }
-    } catch (err: any) {
-      console.error("Error in mock bypass flow:", err);
-      setErrorMessage(err.message || "An unexpected error occurred.");
-    } finally {
       setSubmitting(false);
     }
   };
@@ -1064,34 +1019,14 @@ export default function BookingWidget() {
               Continue <ArrowRight size={16} />
             </button>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.4rem" }}>
-              <button
-                onClick={handleSubmitBooking}
-                disabled={submitting}
-                className="btn btn-primary"
-                style={{ padding: "0.6rem 2rem", fontSize: "0.9rem", opacity: submitting ? 0.7 : 1, cursor: submitting ? "not-allowed" : "pointer" }}
-              >
-                {submitting ? "Initiating..." : `Confirm & Pay ${currency === "INR" ? `₹${selectedPackage.priceINR}` : `$${selectedPackage.priceUSD}`}`}
-              </button>
-              {typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname.includes("vercel.app")) && (
-                <button
-                  type="button"
-                  onClick={handleBypassPayment}
-                  disabled={submitting}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "var(--stellar-cyan)",
-                    fontSize: "0.75rem",
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                    opacity: 0.8,
-                  }}
-                >
-                  ⚡ Bypass Payment (Developer Test Success)
-                </button>
-              )}
-            </div>
+            <button
+              onClick={handleSubmitBooking}
+              disabled={submitting}
+              className="btn btn-primary"
+              style={{ padding: "0.6rem 2rem", fontSize: "0.9rem", opacity: submitting ? 0.7 : 1, cursor: submitting ? "not-allowed" : "pointer" }}
+            >
+              {submitting ? "Initiating..." : `Confirm & Pay ${currency === "INR" ? `₹${selectedPackage.priceINR}` : `$${selectedPackage.priceUSD}`}`}
+            </button>
           )}
         </div>
       )}
