@@ -56,9 +56,9 @@ export async function sendBookingConfirmation(booking: EmailPayload) {
   ].join("\r\n");
 
   const emailHtml = `
-    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #0a0714; color: #fcfcfd; border-radius: 12px; border: 1px solid #e6c875;">
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #0a0714; color: #fcfcfd; border-radius: 12px; border: 1px solid #fbbf24;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #e6c875; font-size: 24px; margin-bottom: 5px;">AstroShubham</h1>
+        <h1 style="color: #fbbf24; font-size: 24px; margin-bottom: 5px;">AstroShubham</h1>
         <p style="color: #a0aec0; font-size: 14px; margin: 0;">Your Celestial Session is Confirmed</p>
       </div>
       
@@ -67,8 +67,8 @@ export async function sendBookingConfirmation(booking: EmailPayload) {
         Greetings. Your payment of <strong>${booking.currency === "INR" ? "₹" : "$"}${booking.amountPaid}</strong> has been successfully processed, and your virtual meeting room is prepared.
       </p>
 
-      <div style="background-color: #120e2e; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #e6c875;">
-        <h3 style="color: #e6c875; margin-top: 0; margin-bottom: 15px;">Appointment Details</h3>
+      <div style="background-color: #120e2e; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #fbbf24;">
+        <h3 style="color: #fbbf24; margin-top: 0; margin-bottom: 15px;">Appointment Details</h3>
         <table style="width: 100%; font-size: 14px; color: #a0aec0;">
           <tr>
             <td style="padding: 4px 0; width: 40%;"><strong>Consultation:</strong></td>
