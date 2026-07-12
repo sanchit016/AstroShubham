@@ -375,7 +375,7 @@ export default function Home() {
                     name: "Can I change my scheduled slot later?",
                     acceptedAnswer: {
                       "@type": "Answer",
-                      text: "Yes, you can request a reschedule up to 24 hours in advance by replying to your confirmation email or contacting support@astroshubham.com.",
+                      text: "Yes, you can request a reschedule up to 24 hours in advance by replying to your confirmation email or contacting astroshubhamchhabra@gmail.com.",
                     },
                   },
                 ],
@@ -411,7 +411,7 @@ export default function Home() {
                   How do the live consultations take place?
                 </h4>
                 <p style={{ fontSize: "0.95rem" }}>
-                  Consultations are conducted online via **Google Meet**. A dynamic calendar invite and video link will be sent to your email address automatically upon scheduling.
+                  Consultations are conducted online via <strong>Google Meet</strong>. A dynamic calendar invite and video link will be sent to your email address automatically upon scheduling.
                 </p>
               </div>
 
@@ -421,7 +421,7 @@ export default function Home() {
                   Can I change my scheduled slot later?
                 </h4>
                 <p style={{ fontSize: "0.95rem" }}>
-                  Yes, you can request a reschedule up to 24 hours in advance by replying to your confirmation email or contacting support@astroshubham.com.
+                  Yes, you can request a reschedule up to 24 hours in advance by replying to your confirmation email or contacting astroshubhamchhabra@gmail.com.
                 </p>
               </div>
             </div>

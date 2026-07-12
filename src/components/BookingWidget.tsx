@@ -941,7 +941,7 @@ export default function BookingWidget() {
               marginBottom: "1.5rem",
             }}
           >
-            Payments are securely routed via **Razorpay**. Supports international cards and UPI.
+            Payments are securely routed via <strong>Razorpay</strong>. Supports international cards and UPI.
           </div>
         </div>
       )}

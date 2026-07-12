@@ -96,7 +96,7 @@ export async function sendBookingConfirmation(booking: EmailPayload) {
       <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.05); margin: 30px 0;" />
       
       <p style="font-size: 12px; color: #6b7280; text-align: center; margin: 0;">
-        AstroShubham &copy; ${new Date().getFullYear()} | support@astroshubham.com
+        AstroShubham &copy; ${new Date().getFullYear()} | astroshubhamchhabra@gmail.com
       </p>
     </div>
   `;

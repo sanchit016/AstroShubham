@@ -42,7 +42,7 @@ export default function Footer() {
             <ul className="footer-links">
               <li style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-secondary)" }}>
                 <Mail size={16} style={{ color: "var(--gold-primary)" }} />
-                <span>support@astroshubham.com</span>
+                <span>astroshubhamchhabra@gmail.com</span>
               </li>
             </ul>
           </div>
