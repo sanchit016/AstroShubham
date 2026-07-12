@@ -65,7 +65,7 @@ export default function Header() {
             left: 0,
             width: "100%",
             height: "calc(100vh - 80px)",
-            backgroundColor: "rgba(10, 7, 20, 0.95)",
+            backgroundColor: "rgba(255, 253, 245, 0.97)",
             backdropFilter: "blur(20px)",
             zIndex: 99,
             display: "flex",
@@ -73,7 +73,7 @@ export default function Header() {
             alignItems: "center",
             justifyContent: "center",
             gap: "2.5rem",
-            borderTop: "1px solid rgba(230, 200, 117, 0.08)",
+            borderTop: "1px solid rgba(180, 150, 50, 0.15)",
           }}
         >
           <Link href="/" className="nav-link" style={{ fontSize: "1.5rem" }} onClick={toggleMenu}>
