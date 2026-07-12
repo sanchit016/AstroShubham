@@ -59,34 +59,34 @@ export default function Home() {
             <div className="hero-visual">
               <svg width="340" height="340" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.85 }}>
                 {/* Concentric Orbits */}
-                <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
-                <circle cx="50" cy="50" r="35" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" strokeDasharray="2 2" />
-                <circle cx="50" cy="50" r="25" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
-                <circle cx="50" cy="50" r="12" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" strokeDasharray="1 1" />
+                <circle cx="50" cy="50" r="45" stroke="rgba(180, 150, 50, 0.12)" strokeWidth="0.5" />
+                <circle cx="50" cy="50" r="35" stroke="rgba(180, 150, 50, 0.08)" strokeWidth="0.5" strokeDasharray="2 2" />
+                <circle cx="50" cy="50" r="25" stroke="rgba(180, 150, 50, 0.12)" strokeWidth="0.5" />
+                <circle cx="50" cy="50" r="12" stroke="rgba(180, 150, 50, 0.08)" strokeWidth="0.5" strokeDasharray="1 1" />
                 
                 {/* Crosshairs */}
-                <line x1="50" y1="2" x2="50" y2="98" stroke="rgba(255,255,255,0.02)" strokeWidth="0.3" />
-                <line x1="2" y1="50" x2="98" y2="50" stroke="rgba(255,255,255,0.02)" strokeWidth="0.3" />
+                <line x1="50" y1="2" x2="50" y2="98" stroke="rgba(180, 150, 50, 0.06)" strokeWidth="0.3" />
+                <line x1="2" y1="50" x2="98" y2="50" stroke="rgba(180, 150, 50, 0.06)" strokeWidth="0.3" />
                 
                 {/* Diagonal rays */}
-                <line x1="18.2" y1="18.2" x2="81.8" y2="81.8" stroke="rgba(255,255,255,0.015)" strokeWidth="0.3" />
-                <line x1="18.2" y1="81.8" x2="81.8" y2="18.2" stroke="rgba(255,255,255,0.015)" strokeWidth="0.3" />
+                <line x1="18.2" y1="18.2" x2="81.8" y2="81.8" stroke="rgba(180, 150, 50, 0.04)" strokeWidth="0.3" />
+                <line x1="18.2" y1="81.8" x2="81.8" y2="18.2" stroke="rgba(180, 150, 50, 0.04)" strokeWidth="0.3" />
                 
                 {/* Constellation 1 */}
-                <path d="M50 20 L65 28 L72 45" stroke="rgba(251, 191, 36, 0.25)" strokeWidth="0.4" strokeDasharray="1 1" />
-                <circle cx="50" cy="20" r="1" fill="#fbbf24" />
-                <circle cx="65" cy="28" r="0.8" fill="#fbbf24" opacity="0.8" />
-                <circle cx="72" cy="45" r="1.2" fill="#fef9e7" />
+                <path d="M50 20 L65 28 L72 45" stroke="rgba(217, 119, 6, 0.3)" strokeWidth="0.4" strokeDasharray="1 1" />
+                <circle cx="50" cy="20" r="1" fill="#d97706" />
+                <circle cx="65" cy="28" r="0.8" fill="#d97706" opacity="0.8" />
+                <circle cx="72" cy="45" r="1.2" fill="#92400e" />
                 
                 {/* Constellation 2 */}
-                <path d="M28 65 L35 75 L50 80" stroke="rgba(251, 191, 36, 0.15)" strokeWidth="0.3" />
-                <circle cx="28" cy="65" r="0.8" fill="#fef9e7" opacity="0.6" />
-                <circle cx="35" cy="75" r="1" fill="#fef9e7" />
-                <circle cx="50" cy="80" r="0.7" fill="#fbbf24" />
+                <path d="M28 65 L35 75 L50 80" stroke="rgba(217, 119, 6, 0.2)" strokeWidth="0.3" />
+                <circle cx="28" cy="65" r="0.8" fill="#92400e" opacity="0.6" />
+                <circle cx="35" cy="75" r="1" fill="#92400e" />
+                <circle cx="50" cy="80" r="0.7" fill="#d97706" />
                 
                 {/* Center Star */}
-                <path d="M50 46 L51.2 48.8 L54 50 L51.2 51.2 L50 54 L48.8 51.2 L46 50 L48.8 48.8 Z" fill="rgba(251, 191, 36, 0.8)" />
-                <circle cx="50" cy="50" r="5" stroke="rgba(251, 191, 36, 0.35)" strokeWidth="0.4" />
+                <path d="M50 46 L51.2 48.8 L54 50 L51.2 51.2 L50 54 L48.8 51.2 L46 50 L48.8 48.8 Z" fill="rgba(217, 119, 6, 0.7)" />
+                <circle cx="50" cy="50" r="5" stroke="rgba(217, 119, 6, 0.35)" strokeWidth="0.4" />
               </svg>
             </div>
           </div>
@@ -105,8 +105,8 @@ export default function Home() {
                   style={{
                     width: "70px",
                     height: "70px",
-                    background: "rgba(251, 191, 36, 0.06)",
-                    border: "1px solid rgba(251, 191, 36, 0.2)",
+                    background: "rgba(217, 119, 6, 0.06)",
+                    border: "1px solid rgba(217, 119, 6, 0.18)",
                     borderRadius: "12px",
                     display: "flex",
                     alignItems: "center",
@@ -145,7 +145,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.05)" }} />
+              <hr style={{ border: "none", borderTop: "1px solid rgba(180, 150, 50, 0.12)" }} />
 
               {/* Category 2: Career & Business */}
               <div className="guidance-item">
@@ -153,8 +153,8 @@ export default function Home() {
                   style={{
                     width: "70px",
                     height: "70px",
-                    background: "rgba(251, 191, 36, 0.06)",
-                    border: "1px solid rgba(251, 191, 36, 0.2)",
+                    background: "rgba(217, 119, 6, 0.06)",
+                    border: "1px solid rgba(217, 119, 6, 0.18)",
                     borderRadius: "12px",
                     display: "flex",
                     alignItems: "center",
@@ -193,7 +193,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.05)" }} />
+              <hr style={{ border: "none", borderTop: "1px solid rgba(180, 150, 50, 0.12)" }} />
 
               {/* Category 3: Family & Relationships */}
               <div className="guidance-item">
@@ -201,8 +201,8 @@ export default function Home() {
                   style={{
                     width: "70px",
                     height: "70px",
-                    background: "rgba(251, 191, 36, 0.06)",
-                    border: "1px solid rgba(251, 191, 36, 0.2)",
+                    background: "rgba(217, 119, 6, 0.06)",
+                    border: "1px solid rgba(217, 119, 6, 0.18)",
                     borderRadius: "12px",
                     display: "flex",
                     alignItems: "center",
@@ -241,7 +241,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.05)" }} />
+              <hr style={{ border: "none", borderTop: "1px solid rgba(180, 150, 50, 0.12)" }} />
 
               {/* Category 4: Health & Vitality */}
               <div className="guidance-item">
@@ -249,8 +249,8 @@ export default function Home() {
                   style={{
                     width: "70px",
                     height: "70px",
-                    background: "rgba(251, 191, 36, 0.06)",
-                    border: "1px solid rgba(251, 191, 36, 0.2)",
+                    background: "rgba(217, 119, 6, 0.06)",
+                    border: "1px solid rgba(217, 119, 6, 0.18)",
                     borderRadius: "12px",
                     display: "flex",
                     alignItems: "center",
@@ -294,7 +294,7 @@ export default function Home() {
         </section>
 
         {/* ABOUT SECTION */}
-        <section id="about" aria-label="About Shubham Chhabra" className="section" style={{ background: "rgba(20, 16, 4, 0.4)", padding: "6rem 0" }}>
+        <section id="about" aria-label="About Shubham Chhabra" className="section" style={{ background: "rgba(248, 243, 227, 0.6)", padding: "6rem 0" }}>
           <div className="nebula-glow-2" />
           <div className="container about-grid">
             <div className="glass-card" style={{ padding: "0.5rem", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -338,7 +338,7 @@ export default function Home() {
         </section>
 
         {/* FAQ SECTION */}
-        <section id="faq" aria-label="Frequently Asked Questions" className="section" style={{ background: "rgba(20, 16, 4, 0.4)", padding: "6rem 0" }}>
+        <section id="faq" aria-label="Frequently Asked Questions" className="section" style={{ background: "rgba(248, 243, 227, 0.6)", padding: "6rem 0" }}>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
