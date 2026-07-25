@@ -7,14 +7,8 @@ import BookingWidget from "@/components/BookingWidget";
 import Testimonials from "@/components/Testimonials";
 import { Sparkles, Heart, Briefcase, Users, Activity, ChevronRight, HelpCircle, Star } from "lucide-react";
 import { fadeUp, fadeIn, scaleIn, staggerContainer, viewportOnce } from "@/lib/motion";
-import { getPackage, formatPrice } from "@/lib/pricing";
-
-const GENERAL_PKG = getPackage("general");
-const MARRIAGE_PKG = getPackage("marriage");
-const GENERAL_USD = formatPrice(GENERAL_PKG, "USD");
-const GENERAL_INR = formatPrice(GENERAL_PKG, "INR");
-const MARRIAGE_USD = formatPrice(MARRIAGE_PKG, "USD");
-const MARRIAGE_INR = formatPrice(MARRIAGE_PKG, "INR");
+import { getPackage, formatPrice, type CurrencyCode } from "@/lib/pricing";
+import { useCurrency } from "@/lib/useCurrency";
 
 const GUIDANCE_CATEGORIES = [
   {
@@ -28,7 +22,7 @@ const GUIDANCE_CATEGORIES = [
       "Are we astrologically compatible?",
       "Remedies for delayed marriage?",
     ],
-    cta: { label: `Book Couple Session (${MARRIAGE_USD})`, pkg: "marriage" },
+    cta: { action: "Book Couple Session", pkg: "marriage" },
   },
   {
     icon: Briefcase,
@@ -41,7 +35,7 @@ const GUIDANCE_CATEGORIES = [
       "Which field will bring me the most wealth?",
       "Remedies for career obstacles?",
     ],
-    cta: { label: `Book Session (${GENERAL_USD})`, pkg: "general" },
+    cta: { action: "Book Session", pkg: "general" },
   },
   {
     icon: Users,
@@ -54,7 +48,7 @@ const GUIDANCE_CATEGORIES = [
       "When will family property disputes resolve?",
       "Remedies for peace at home?",
     ],
-    cta: { label: `Book Session (${GENERAL_USD})`, pkg: "general" },
+    cta: { action: "Book Session", pkg: "general" },
   },
   {
     icon: Activity,
@@ -67,38 +61,56 @@ const GUIDANCE_CATEGORIES = [
       "What astrological remedies support physical vitality?",
       "Timing of health recovery?",
     ],
-    cta: { label: `Book Session (${GENERAL_USD})`, pkg: "general" },
+    cta: { action: "Book Session", pkg: "general" },
   },
 ];
 
-const FAQ_ITEMS = [
-  {
-    q: "What is the difference between the plans?",
-    a: (
-      <>
-        The <strong>General Plan ({GENERAL_USD})</strong> is for individual queries where you can ask Shubham any number of questions regarding career, health, or family. The <strong>Couple/Matching Plan ({MARRIAGE_USD})</strong> is a double-chart reading specifically optimized for marriage matching (Gun Milan) and relationship consultation involving two profiles.
-      </>
-    ),
-  },
-  {
-    q: "What details are required for the session?",
-    a: "You will need to provide your exact Birth Date, Birth Time, and Birth Place. For couple compatibility readings, providing birth parameters for both partners is recommended.",
-  },
-  {
-    q: "How do the live consultations take place?",
-    a: (
-      <>
-        Consultations are conducted online via <strong>Google Meet</strong>. A dynamic calendar invite and video link will be sent to your email address automatically upon scheduling.
-      </>
-    ),
-  },
-  {
-    q: "Can I change my scheduled slot later?",
-    a: "Yes, you can request a reschedule up to 24 hours in advance by replying to your confirmation email or contacting astroshubhamchhabra@gmail.com.",
-  },
-];
+function getFaqItems(currency: CurrencyCode) {
+  const generalPrice = formatPrice(getPackage("general"), currency);
+  const marriagePrice = formatPrice(getPackage("marriage"), currency);
+
+  return [
+    {
+      q: "What is the difference between the plans?",
+      a: (
+        <>
+          The <strong>General Plan ({generalPrice})</strong> is for individual queries where you can ask Shubham any number of questions regarding career, health, or family. The <strong>Couple/Matching Plan ({marriagePrice})</strong> is a double-chart reading specifically optimized for marriage matching (Gun Milan) and relationship consultation involving two profiles.
+        </>
+      ),
+      plainText: `The General Plan (${generalPrice}) is for individual queries where you can ask any number of questions regarding career, health, or family. The Couple/Matching Plan (${marriagePrice}) is a double-chart reading specifically optimized for marriage matching (Gun Milan) and relationship consultation involving two profiles.`,
+    },
+    {
+      q: "What details are required for the session?",
+      a: "You will need to provide your exact Birth Date, Birth Time, and Birth Place. For couple compatibility readings, providing birth parameters for both partners is recommended.",
+      plainText:
+        "You will need to provide your exact Birth Date, Birth Time, and Birth Place. For couple compatibility readings, providing birth parameters for both partners is recommended.",
+    },
+    {
+      q: "How do the live consultations take place?",
+      a: (
+        <>
+          Consultations are conducted online via <strong>Google Meet</strong>. A dynamic calendar invite and video link will be sent to your email address automatically upon scheduling.
+        </>
+      ),
+      plainText:
+        "Consultations are conducted online via Google Meet. A dynamic calendar invite and video link will be sent to your email address automatically upon scheduling.",
+    },
+    {
+      q: "Can I change my scheduled slot later?",
+      a: "Yes, you can request a reschedule up to 24 hours in advance by replying to your confirmation email or contacting astroshubhamchhabra@gmail.com.",
+      plainText:
+        "Yes, you can request a reschedule up to 24 hours in advance by replying to your confirmation email or contacting astroshubhamchhabra@gmail.com.",
+    },
+  ];
+}
 
 export default function Home() {
+  // Auto-detected from the visitor's locale/timezone (shared with BookingWidget) — no manual selector.
+  const currency = useCurrency();
+  const faqItems = getFaqItems(currency);
+  const generalPrice = formatPrice(getPackage("general"), currency);
+  const marriagePrice = formatPrice(getPackage("marriage"), currency);
+
   const handleBookClick = (pkgId: string) => {
     window.dispatchEvent(new CustomEvent("select-package", { detail: pkgId }));
     const element = document.getElementById("book");
@@ -136,7 +148,7 @@ export default function Home() {
               <motion.div variants={fadeUp} style={{ margin: "1rem 0", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", fontSize: "1.05rem", color: "var(--gold-primary)" }}>
                   <Star size={16} fill="var(--gold-primary)" />
-                  <span><strong>General Plan: {GENERAL_USD} ({GENERAL_INR}) | Couple/Matching: {MARRIAGE_USD} ({MARRIAGE_INR})</strong></span>
+                  <span><strong>General Plan: {generalPrice} | Couple/Matching: {marriagePrice}</strong></span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", fontSize: "0.95rem", color: "var(--stellar-cyan)" }}>
                   <Sparkles size={16} />
@@ -263,7 +275,7 @@ export default function Home() {
                           className="btn btn-secondary"
                           style={{ padding: "0.5rem 1.2rem", fontSize: "0.85rem", cursor: "pointer" }}
                         >
-                          {category.cta.label}
+                          {category.cta.action} ({formatPrice(getPackage(category.cta.pkg), currency)})
                         </motion.button>
                       </div>
                     </motion.div>
@@ -333,19 +345,12 @@ export default function Home() {
               __html: JSON.stringify({
                 "@context": "https://schema.org",
                 "@type": "FAQPage",
-                mainEntity: FAQ_ITEMS.map((item) => ({
+                mainEntity: faqItems.map((item) => ({
                   "@type": "Question",
                   name: item.q,
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text:
-                      item.q === "What is the difference between the plans?"
-                        ? `The General Plan (${GENERAL_USD} / ${GENERAL_INR}) is for individual queries where you can ask any number of questions regarding career, health, or family. The Couple/Matching Plan (${MARRIAGE_USD} / ${MARRIAGE_INR}) is a double-chart reading specifically optimized for marriage matching (Gun Milan) and relationship consultation involving two profiles.`
-                        : item.q === "What details are required for the session?"
-                        ? "You will need to provide your exact Birth Date, Birth Time, and Birth Place. For couple compatibility readings, providing birth parameters for both partners is recommended."
-                        : item.q === "How do the live consultations take place?"
-                        ? "Consultations are conducted online via Google Meet. A dynamic calendar invite and video link will be sent to your email address automatically upon scheduling."
-                        : "Yes, you can request a reschedule up to 24 hours in advance by replying to your confirmation email or contacting astroshubhamchhabra@gmail.com.",
+                    text: item.plainText,
                   },
                 })),
               }),
@@ -368,7 +373,7 @@ export default function Home() {
               variants={staggerContainer(0.1)}
               style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}
             >
-              {FAQ_ITEMS.map((item) => (
+              {faqItems.map((item) => (
                 <motion.div key={item.q} variants={fadeUp} className="glass-card hover-lift" style={{ padding: "1.5rem" }}>
                   <h4 style={{ display: "flex", alignItems: "center", gap: "0.6rem", color: "var(--gold-primary)", marginBottom: "0.4rem", fontSize: "1.05rem" }}>
                     <HelpCircle size={16} style={{ color: "var(--stellar-cyan)" }} />

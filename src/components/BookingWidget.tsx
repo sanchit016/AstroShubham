@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Calendar as CalendarIcon, Clock, ArrowRight, Check, Sparkles, AlertCircle } from "lucide-react";
 import { PACKAGES, formatPrice, type PackageDefinition, type CurrencyCode } from "@/lib/pricing";
+import { useCurrency } from "@/lib/useCurrency";
 
 const stepVariants: Variants = {
   enter: (direction: number) => ({ opacity: 0, x: direction > 0 ? 24 : -24 }),
@@ -38,7 +39,9 @@ export default function BookingWidget() {
     setDirection(next > step ? 1 : -1);
     setStep(next);
   };
-  const [currency, setCurrency] = useState<CurrencyCode>("USD");
+  // Currency is auto-detected from the visitor's locale/timezone (India -> INR, Canada -> CAD,
+  // else USD) and shared with the homepage via useCurrency — no manual selector.
+  const currency = useCurrency();
   const [selectedPackage, setSelectedPackage] = useState<PackageDefinition>(PACKAGES[0]);
 
   // Slots fetched from the API
@@ -120,31 +123,17 @@ export default function BookingWidget() {
     return "America/Los_Angeles";
   };
 
-  // Manual currency toggle: switch currency, jump the timezone view to that region's default,
-  // and drop any pending PayPal order created for the previous currency selection.
-  const handleCurrencyChange = (value: CurrencyCode) => {
-    setCurrency(value);
-    setSelectedTimezone(defaultTimezoneForCurrency(value));
-    setPaypalOrder(null);
-  };
-
-  // Auto-detect visitor's locale on load: INR for India-based signals, CAD for Canada-based
-  // signals, USD otherwise. Uses the actual detected timezone where possible. The manual
-  // toggle above always overrides this.
+  // Detect the visitor's actual timezone for the schedule view, falling back to the
+  // detected currency's regional default if the browser doesn't report one.
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
       const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const locale = navigator.language || "";
-      const looksIndian = detectedTz === "Asia/Kolkata" || detectedTz === "Asia/Calcutta" || /-in$/i.test(locale);
-      const looksCanadian = /-ca$/i.test(locale) || /^America\/(Toronto|Vancouver|Montreal|Edmonton|Winnipeg|Halifax|Ottawa)$/.test(detectedTz);
-      const detectedCurrency: CurrencyCode = looksIndian ? "INR" : looksCanadian ? "CAD" : "USD";
-      setCurrency(detectedCurrency);
-      setSelectedTimezone(detectedTz || defaultTimezoneForCurrency(detectedCurrency));
+      setSelectedTimezone(detectedTz || defaultTimezoneForCurrency(currency));
     } catch (e) {
-      console.warn("Browser locale auto-detection failed.");
+      console.warn("Browser timezone auto-detection failed.");
     }
-  }, []);
+  }, [currency]);
 
   // Reset selected date/slot when timezone selection changes
   useEffect(() => {
@@ -575,51 +564,6 @@ export default function BookingWidget() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Currency Switcher */}
-      {step === 1 && (
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem", gap: "0.4rem" }}>
-          <button
-            onClick={() => handleCurrencyChange("USD")}
-            className="btn"
-            style={{
-              padding: "0.25rem 0.6rem",
-              fontSize: "0.75rem",
-              background: currency === "USD" ? "var(--text-primary)" : "transparent",
-              color: currency === "USD" ? "var(--bg-dark)" : "var(--text-primary)",
-              border: "1px solid var(--border-color)",
-            }}
-          >
-            USD ($)
-          </button>
-          <button
-            onClick={() => handleCurrencyChange("INR")}
-            className="btn"
-            style={{
-              padding: "0.25rem 0.6rem",
-              fontSize: "0.75rem",
-              background: currency === "INR" ? "var(--text-primary)" : "transparent",
-              color: currency === "INR" ? "var(--bg-dark)" : "var(--text-primary)",
-              border: "1px solid var(--border-color)",
-            }}
-          >
-            INR (₹)
-          </button>
-          <button
-            onClick={() => handleCurrencyChange("CAD")}
-            className="btn"
-            style={{
-              padding: "0.25rem 0.6rem",
-              fontSize: "0.75rem",
-              background: currency === "CAD" ? "var(--text-primary)" : "transparent",
-              color: currency === "CAD" ? "var(--bg-dark)" : "var(--text-primary)",
-              border: "1px solid var(--border-color)",
-            }}
-          >
-            CAD ($)
-          </button>
-        </div>
-      )}
 
       <AnimatePresence mode="wait" custom={direction}>
       {/* Step 1: Choose Package */}
