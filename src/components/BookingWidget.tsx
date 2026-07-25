@@ -1,35 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Calendar as CalendarIcon, Clock, ArrowRight, Check, Sparkles, AlertCircle } from "lucide-react";
+import { PACKAGES, formatPrice, type PackageDefinition, type CurrencyCode } from "@/lib/pricing";
 
-interface Package {
-  id: string;
-  title: string;
-  priceINR: number;
-  priceUSD: number;
-  duration: string;
-  description: string;
-}
-
-const PACKAGES: Package[] = [
-  {
-    id: "general",
-    title: "General Consultation (Unlimited Questions)",
-    priceINR: 1999,
-    priceUSD: 25,
-    duration: "45 Minutes",
-    description: "Connect for a private consultation to discuss all your life aspects (Career, Health, Family, etc.). Ask any number of questions.",
-  },
-  {
-    id: "marriage",
-    title: "Marriage Match & Couple Consultation",
-    priceINR: 2999,
-    priceUSD: 40,
-    duration: "60 Minutes",
-    description: "Detailed Vedic & Lal Kitab compatibility reading for couples. Includes Gun Milan, planetary charts comparison, and Venus/7th house adjustments.",
-  },
-];
+const stepVariants: Variants = {
+  enter: (direction: number) => ({ opacity: 0, x: direction > 0 ? 24 : -24 }),
+  center: { opacity: 1, x: 0, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } },
+  exit: (direction: number) => ({ opacity: 0, x: direction > 0 ? -24 : 24, transition: { duration: 0.2 } }),
+};
 
 interface Slot {
   id: string;
@@ -53,8 +33,13 @@ const TIMEZONES = [
 
 export default function BookingWidget() {
   const [step, setStep] = useState(1);
-  const [currency, setCurrency] = useState<"INR" | "USD">("USD");
-  const [selectedPackage, setSelectedPackage] = useState<Package>(PACKAGES[0]);
+  const [direction, setDirection] = useState(1);
+  const changeStep = (next: number) => {
+    setDirection(next > step ? 1 : -1);
+    setStep(next);
+  };
+  const [currency, setCurrency] = useState<CurrencyCode>("USD");
+  const [selectedPackage, setSelectedPackage] = useState<PackageDefinition>(PACKAGES[0]);
 
   // Slots fetched from the API
   const [slots, setSlots] = useState<Slot[]>([]);
@@ -84,6 +69,10 @@ export default function BookingWidget() {
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // PayPal checkout state (USD/CAD route through PayPal since Razorpay only settles INR here)
+  const [paypalOrder, setPaypalOrder] = useState<{ orderId: string; clientId: string; currency: CurrencyCode } | null>(null);
+  const paypalContainerRef = useRef<HTMLDivElement | null>(null);
 
   // Fetch slots from API, dynamic based on selected package duration & buffer
   useEffect(() => {
@@ -115,7 +104,7 @@ export default function BookingWidget() {
       const pkg = PACKAGES.find((p) => p.id === pkgId);
       if (pkg) {
         setSelectedPackage(pkg);
-        setStep(1); // Jump to choose package first
+        changeStep(1); // Jump to choose package first
       }
     };
 
@@ -125,28 +114,37 @@ export default function BookingWidget() {
     };
   }, []);
 
-  // Detect and set browser's local timezone as default on load
+  const defaultTimezoneForCurrency = (c: CurrencyCode) => {
+    if (c === "INR") return "Asia/Kolkata";
+    if (c === "CAD") return "America/Toronto";
+    return "America/Los_Angeles";
+  };
+
+  // Manual currency toggle: switch currency, jump the timezone view to that region's default,
+  // and drop any pending PayPal order created for the previous currency selection.
+  const handleCurrencyChange = (value: CurrencyCode) => {
+    setCurrency(value);
+    setSelectedTimezone(defaultTimezoneForCurrency(value));
+    setPaypalOrder(null);
+  };
+
+  // Auto-detect visitor's locale on load: INR for India-based signals, CAD for Canada-based
+  // signals, USD otherwise. Uses the actual detected timezone where possible. The manual
+  // toggle above always overrides this.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        if (detectedTz) {
-          setSelectedTimezone(detectedTz);
-        }
-      } catch (e) {
-        console.warn("Browser timezone auto-detection failed.");
-      }
+    if (typeof window === "undefined") return;
+    try {
+      const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const locale = navigator.language || "";
+      const looksIndian = detectedTz === "Asia/Kolkata" || detectedTz === "Asia/Calcutta" || /-in$/i.test(locale);
+      const looksCanadian = /-ca$/i.test(locale) || /^America\/(Toronto|Vancouver|Montreal|Edmonton|Winnipeg|Halifax|Ottawa)$/.test(detectedTz);
+      const detectedCurrency: CurrencyCode = looksIndian ? "INR" : looksCanadian ? "CAD" : "USD";
+      setCurrency(detectedCurrency);
+      setSelectedTimezone(detectedTz || defaultTimezoneForCurrency(detectedCurrency));
+    } catch (e) {
+      console.warn("Browser locale auto-detection failed.");
     }
   }, []);
-
-  // Auto-align default timezone view when currency is toggled
-  useEffect(() => {
-    if (currency === "USD") {
-      setSelectedTimezone("America/Los_Angeles");
-    } else {
-      setSelectedTimezone("Asia/Kolkata");
-    }
-  }, [currency]);
 
   // Reset selected date/slot when timezone selection changes
   useEffect(() => {
@@ -255,13 +253,13 @@ export default function BookingWidget() {
 
   const handleNextStep = () => {
     if (step === 1) {
-      setStep(2);
+      changeStep(2);
     } else if (step === 2) {
       if (!selectedDate || !selectedSlotId) {
         alert("Please select both a Date and a Time slot.");
         return;
       }
-      setStep(3);
+      changeStep(3);
     } else if (step === 3) {
       if (!formData.name || !formData.email || !formData.birthDate || !formData.birthTime || !formData.birthPlace) {
         alert("Please fill in all mandatory birth details.");
@@ -277,13 +275,13 @@ export default function BookingWidget() {
         return;
       }
 
-      setStep(4);
+      changeStep(4);
     }
   };
 
   const handlePrevStep = () => {
     if (step > 1) {
-      setStep(step - 1);
+      changeStep(step - 1);
     }
   };
 
@@ -305,13 +303,17 @@ export default function BookingWidget() {
     e.preventDefault();
     setSubmitting(true);
     setErrorMessage("");
+    setPaypalOrder(null);
 
     try {
-      const isSDKLoaded = await loadRazorpaySDK();
-      if (!isSDKLoaded) {
-        setErrorMessage("Failed to load payment processor. Please check your internet connection.");
-        setSubmitting(false);
-        return;
+      // Razorpay's checkout.js is only needed for the INR flow
+      if (currency === "INR") {
+        const isSDKLoaded = await loadRazorpaySDK();
+        if (!isSDKLoaded) {
+          setErrorMessage("Failed to load payment processor. Please check your internet connection.");
+          setSubmitting(false);
+          return;
+        }
       }
 
       const res = await fetch("/api/bookings", {
@@ -328,6 +330,14 @@ export default function BookingWidget() {
       const data = await res.json();
       if (!res.ok || !data.success) {
         setErrorMessage(data.error || "Booking submission failed.");
+        setSubmitting(false);
+        return;
+      }
+
+      // USD/CAD route through PayPal: the booking/order is created, now render the actual
+      // PayPal button below for the customer to complete payment on PayPal's own UI.
+      if (data.provider === "paypal") {
+        setPaypalOrder({ orderId: data.paypalOrderId, clientId: data.paypalClientId, currency });
         setSubmitting(false);
         return;
       }
@@ -361,7 +371,7 @@ export default function BookingWidget() {
             });
             const verifyData = await verifyRes.json();
             if (verifyData.success) {
-              setStep(5); // Success step!
+              changeStep(5); // Success step!
             } else {
               setErrorMessage(verifyData.error || "Payment validation failed.");
             }
@@ -387,6 +397,69 @@ export default function BookingWidget() {
       setSubmitting(false);
     }
   };
+
+  // Renders PayPal's own Smart Button once a PayPal order has been created server-side.
+  // The script is scoped per client-id/currency combination since both are baked into its URL.
+  useEffect(() => {
+    if (!paypalOrder || !paypalContainerRef.current) return;
+    let cancelled = false;
+
+    const renderButtons = () => {
+      if (cancelled || !paypalContainerRef.current) return;
+      paypalContainerRef.current.innerHTML = "";
+      (window as any).paypal
+        .Buttons({
+          createOrder: () => paypalOrder.orderId,
+          onApprove: async () => {
+            setSubmitting(true);
+            try {
+              const verifyRes = await fetch("/api/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paypalOrderId: paypalOrder.orderId }),
+              });
+              const verifyData = await verifyRes.json();
+              if (verifyData.success) {
+                changeStep(5);
+              } else {
+                setErrorMessage(verifyData.error || "Payment validation failed.");
+              }
+            } catch (err) {
+              console.error("PayPal verification error:", err);
+              setErrorMessage("Error verifying payment transaction.");
+            } finally {
+              setSubmitting(false);
+            }
+          },
+          onError: (err: any) => {
+            console.error("PayPal Buttons error:", err);
+            setErrorMessage("PayPal checkout encountered an error. Please try again.");
+          },
+        })
+        .render(paypalContainerRef.current);
+    };
+
+    const scriptId = "paypal-sdk";
+    const neededSrc = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(paypalOrder.clientId)}&currency=${paypalOrder.currency}`;
+    const existingScript = document.getElementById(scriptId) as HTMLScriptElement | null;
+
+    if (existingScript && existingScript.src === neededSrc && (window as any).paypal) {
+      renderButtons();
+    } else {
+      existingScript?.remove();
+      delete (window as any).paypal;
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = neededSrc;
+      script.onload = renderButtons;
+      script.onerror = () => setErrorMessage("Failed to load PayPal checkout. Please check your internet connection.");
+      document.body.appendChild(script);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [paypalOrder]);
 
   const getSelectedSlotTimeLabel = () => {
     const slot = slots.find((s) => s.id === selectedSlotId);
@@ -420,7 +493,7 @@ export default function BookingWidget() {
                 gap: "0.5rem",
                 cursor: s < step ? "pointer" : "default",
               }}
-              onClick={() => s < step && setStep(s)}
+              onClick={() => s < step && changeStep(s)}
             >
               <div
                 style={{
@@ -463,44 +536,51 @@ export default function BookingWidget() {
               zIndex: 1,
             }}
           >
-            <div
+            <motion.div
               style={{
                 height: "100%",
-                width: `${((step - 1) / 3) * 100}%`,
                 background: "var(--text-primary)",
-                transition: "width 0.4s ease",
               }}
+              animate={{ width: `${((step - 1) / 3) * 100}%` }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             />
           </div>
         </div>
       )}
 
       {/* Error Bar */}
-      {errorMessage && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            background: "rgba(239, 68, 68, 0.08)",
-            border: "1px solid rgba(239, 68, 68, 0.25)",
-            padding: "0.8rem 1.2rem",
-            borderRadius: "4px",
-            color: "#f87171",
-            fontSize: "0.9rem",
-            marginBottom: "1.5rem",
-          }}
-        >
-          <AlertCircle size={16} />
-          <span>{errorMessage}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {errorMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: -8, height: 0 }}
+            transition={{ duration: 0.25 }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              background: "rgba(239, 68, 68, 0.08)",
+              border: "1px solid rgba(239, 68, 68, 0.25)",
+              padding: "0.8rem 1.2rem",
+              borderRadius: "4px",
+              color: "#f87171",
+              fontSize: "0.9rem",
+              marginBottom: "1.5rem",
+              overflow: "hidden",
+            }}
+          >
+            <AlertCircle size={16} />
+            <span>{errorMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Currency Switcher */}
       {step === 1 && (
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem", gap: "0.4rem" }}>
           <button
-            onClick={() => setCurrency("USD")}
+            onClick={() => handleCurrencyChange("USD")}
             className="btn"
             style={{
               padding: "0.25rem 0.6rem",
@@ -513,7 +593,7 @@ export default function BookingWidget() {
             USD ($)
           </button>
           <button
-            onClick={() => setCurrency("INR")}
+            onClick={() => handleCurrencyChange("INR")}
             className="btn"
             style={{
               padding: "0.25rem 0.6rem",
@@ -525,18 +605,34 @@ export default function BookingWidget() {
           >
             INR (₹)
           </button>
+          <button
+            onClick={() => handleCurrencyChange("CAD")}
+            className="btn"
+            style={{
+              padding: "0.25rem 0.6rem",
+              fontSize: "0.75rem",
+              background: currency === "CAD" ? "var(--text-primary)" : "transparent",
+              color: currency === "CAD" ? "var(--bg-dark)" : "var(--text-primary)",
+              border: "1px solid var(--border-color)",
+            }}
+          >
+            CAD ($)
+          </button>
         </div>
       )}
 
+      <AnimatePresence mode="wait" custom={direction}>
       {/* Step 1: Choose Package */}
       {step === 1 && (
-        <div>
+        <motion.div key="step-1" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit">
           <h3 style={{ textAlign: "center", marginBottom: "1.8rem", color: "var(--text-primary)" }}>Choose Consultation Plan</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {PACKAGES.map((pkg) => (
-              <div
+              <motion.div
                 key={pkg.id}
                 onClick={() => selectPackageById(pkg.id)}
+                whileHover={{ scale: 1.015 }}
+                whileTap={{ scale: 0.99 }}
                 style={{
                   padding: "1.2rem 1.5rem",
                   borderRadius: "var(--border-radius)",
@@ -561,18 +657,18 @@ export default function BookingWidget() {
                 </div>
                 <div>
                   <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "var(--text-primary)" }}>
-                    {currency === "INR" ? `₹${pkg.priceINR}` : `$${pkg.priceUSD}`}
+                    {formatPrice(pkg, currency)}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Step 2: Schedule (Date & Time) */}
       {step === 2 && (
-        <div>
+        <motion.div key="step-2" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit">
           <h3 style={{ textAlign: "center", marginBottom: "1.8rem", color: "var(--text-primary)" }}>Select Consultation Slot</h3>
           {loadingSlots ? (
             <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--text-secondary)", fontSize: "0.95rem" }}>
@@ -602,12 +698,14 @@ export default function BookingWidget() {
                     const isSelected = selectedDate &&
                       selectedDate.toLocaleDateString("en-US", { timeZone: tz }) === date.toLocaleDateString("en-US", { timeZone: tz });
                     return (
-                      <button
+                      <motion.button
                         key={date.toISOString()}
                         onClick={() => {
                           setSelectedDate(date);
                           setSelectedSlotId("");
                         }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         className="btn"
                         style={{
                           padding: "0.6rem 0.2rem",
@@ -627,7 +725,7 @@ export default function BookingWidget() {
                         <span style={{ fontSize: "0.65rem", opacity: 0.8 }}>
                           {date.toLocaleDateString("en-US", { month: "short", timeZone: tz })}
                         </span>
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
@@ -656,9 +754,11 @@ export default function BookingWidget() {
                         timeZone: tz,
                       });
                       return (
-                        <button
+                        <motion.button
                           key={slot.id}
                           onClick={() => setSelectedSlotId(slot.id)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           className="btn"
                           style={{
                             padding: "0.6rem 0.4rem",
@@ -670,7 +770,7 @@ export default function BookingWidget() {
                           }}
                         >
                           {timeString}
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -709,12 +809,12 @@ export default function BookingWidget() {
 
             </div>
           )}
-        </div>
+        </motion.div>
       )}
 
       {/* Step 3: Personal & Birth Details */}
       {step === 3 && (
-        <div className="form-container">
+        <motion.div key="step-3" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit" className="form-container">
           <h3 style={{ textAlign: "center", marginBottom: "1rem", color: "var(--text-primary)" }}>Provide Birth Parameters</h3>
           
           {/* Full Name */}
@@ -864,12 +964,12 @@ export default function BookingWidget() {
               </select>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Step 4: Review & Pay */}
       {step === 4 && (
-        <div>
+        <motion.div key="step-4" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit">
           <h3 style={{ textAlign: "center", marginBottom: "1.8rem", color: "var(--text-primary)" }}>Confirm Session</h3>
           
           <div
@@ -924,7 +1024,7 @@ export default function BookingWidget() {
                 <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>{selectedPackage.duration} session</span>
               </div>
               <span style={{ fontSize: "1.8rem", fontWeight: "bold", color: "var(--text-primary)" }}>
-                {currency === "INR" ? `₹${selectedPackage.priceINR}` : `$${selectedPackage.priceUSD}`}
+                {formatPrice(selectedPackage, currency)}
               </span>
             </div>
           </div>
@@ -941,15 +1041,34 @@ export default function BookingWidget() {
               marginBottom: "1.5rem",
             }}
           >
-            Payments are securely routed via <strong>Razorpay</strong>. Supports international cards and UPI.
+            {currency === "INR" ? (
+              <>Payments are securely routed via <strong>Razorpay</strong>. Supports international cards and UPI.</>
+            ) : (
+              <>Payments are securely routed via <strong>PayPal</strong>. Click &ldquo;Continue to Payment&rdquo; below to open the PayPal button.</>
+            )}
           </div>
-        </div>
+
+          {currency !== "INR" && paypalOrder && (
+            <div style={{ marginBottom: "1rem" }}>
+              <div ref={paypalContainerRef} />
+            </div>
+          )}
+        </motion.div>
       )}
 
       {/* Step 5: Success State */}
       {step === 5 && (
-        <div style={{ textAlign: "center", padding: "2rem 1rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.2rem" }}>
-          <div
+        <motion.div
+          key="step-5"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          style={{ textAlign: "center", padding: "2rem 1rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.2rem" }}
+        >
+          <motion.div
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.1 }}
             style={{
               width: "64px",
               height: "64px",
@@ -963,7 +1082,7 @@ export default function BookingWidget() {
             }}
           >
             <Sparkles size={32} />
-          </div>
+          </motion.div>
           <h2 style={{ fontSize: "1.6rem" }}>
             Session Confirmed
           </h2>
@@ -989,44 +1108,58 @@ export default function BookingWidget() {
               <li>Shubham will chart your stars and prepare your responses beforehand.</li>
             </ol>
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => {
-              setStep(1);
+              changeStep(1);
               setSelectedDate(null);
               setSelectedSlotId("");
+              setPaypalOrder(null);
             }}
             className="btn btn-primary"
             style={{ marginTop: "1rem", fontSize: "0.95rem", padding: "0.6rem 1.5rem" }}
           >
             Book Another Consultation
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Navigation Buttons */}
       {step <= 4 && (
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
           {step > 1 ? (
-            <button onClick={handlePrevStep} className="btn btn-secondary" style={{ padding: "0.6rem 1.2rem", fontSize: "0.9rem" }}>
+            <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={handlePrevStep} className="btn btn-secondary" style={{ padding: "0.6rem 1.2rem", fontSize: "0.9rem" }}>
               Back
-            </button>
+            </motion.button>
           ) : (
             <div />
           )}
 
           {step < 4 ? (
-            <button onClick={handleNextStep} className="btn btn-primary" style={{ padding: "0.6rem 1.5rem", fontSize: "0.9rem" }}>
+            <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={handleNextStep} className="btn btn-primary" style={{ padding: "0.6rem 1.5rem", fontSize: "0.9rem" }}>
               Continue <ArrowRight size={16} />
-            </button>
+            </motion.button>
+          ) : currency !== "INR" && paypalOrder ? (
+            // Booking + PayPal order already created — payment now happens via the PayPal
+            // button rendered above, not this nav button.
+            <div />
           ) : (
-            <button
+            <motion.button
+              whileHover={{ scale: submitting ? 1 : 1.03 }}
+              whileTap={{ scale: submitting ? 1 : 0.97 }}
               onClick={handleSubmitBooking}
               disabled={submitting}
               className="btn btn-primary"
               style={{ padding: "0.6rem 2rem", fontSize: "0.9rem", opacity: submitting ? 0.7 : 1, cursor: submitting ? "not-allowed" : "pointer" }}
             >
-              {submitting ? "Initiating..." : `Confirm & Pay ${currency === "INR" ? `₹${selectedPackage.priceINR}` : `$${selectedPackage.priceUSD}`}`}
-            </button>
+              {submitting
+                ? "Initiating..."
+                : currency === "INR"
+                ? `Confirm & Pay ${formatPrice(selectedPackage, currency)}`
+                : `Continue to Payment (${formatPrice(selectedPackage, currency)})`}
+            </motion.button>
           )}
         </div>
       )}

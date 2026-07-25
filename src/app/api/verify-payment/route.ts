@@ -1,13 +1,66 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { mockDb } from "@/lib/mockDb";
-import { googleCalendar } from "@/lib/googleCalendar";
-import { sendBookingConfirmation } from "@/lib/email";
-import { finalizeBooking, releaseBookingSlot, getPackageNameByPrice } from "@/lib/bookingService";
+import { paypal } from "@/lib/paypal";
+import { finalizeBooking, finalizeMockBooking, releaseBookingSlot } from "@/lib/bookingService";
+
+async function verifyPaypalPayment(paypalOrderId: string) {
+  try {
+    // --- MOCK FALLBACK CHECK ---
+    if (paypalOrderId.startsWith("order_mock")) {
+      console.log("Mock PayPal order detected. Finalizing in-memory...");
+      const mockBooking = await finalizeMockBooking(paypalOrderId, `mock_capture_${Date.now()}`);
+      if (mockBooking) {
+        return NextResponse.json({ success: true, message: "Mock PayPal payment verified and finalized in memory." });
+      }
+      return NextResponse.json({ success: false, error: "Booking order not found in mock." }, { status: 400 });
+    }
+
+    if (!paypal.isConfigured()) {
+      return NextResponse.json({ success: false, error: "PayPal is not configured." }, { status: 500 });
+    }
+
+    const capture = await paypal.captureOrder(paypalOrderId);
+
+    if (capture.status === "COMPLETED" && capture.captureId) {
+      try {
+        await finalizeBooking(paypalOrderId, capture.captureId);
+        return NextResponse.json({ success: true, message: "Payment verified and booking confirmed!" });
+      } catch (dbErr: any) {
+        console.warn("DB connection lost during finalizeBooking. Finalizing in-memory mock instead.");
+        const mockBooking = await finalizeMockBooking(paypalOrderId, capture.captureId);
+        if (mockBooking) {
+          return NextResponse.json({ success: true, message: "Finalized in mockDb fallback." });
+        }
+        throw dbErr;
+      }
+    }
+
+    try {
+      await releaseBookingSlot(paypalOrderId);
+    } catch (dbErr) {
+      mockDb.failBooking(paypalOrderId);
+    }
+    return NextResponse.json({ success: false, error: "PayPal payment was not completed." }, { status: 400 });
+  } catch (error: any) {
+    console.error("Error verifying PayPal payment:", error);
+    return NextResponse.json(
+      { success: false, error: error.message || "Failed to verify PayPal payment" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(req: Request) {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = await req.json();
+    const body = await req.json();
+
+    // PayPal path: capture the buyer-approved order and finalize the booking
+    if (body.paypalOrderId) {
+      return await verifyPaypalPayment(body.paypalOrderId);
+    }
+
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return NextResponse.json(
@@ -19,53 +72,8 @@ export async function POST(req: Request) {
     // --- MOCK FALLBACK CHECK ---
     if (razorpay_order_id.startsWith("order_mock") || razorpay_signature === "mock_signature") {
       console.log("Mock Order detected. Finalizing in-memory...");
-      const mockBooking = mockDb.finalizeBooking(razorpay_order_id, razorpay_payment_id);
+      const mockBooking = await finalizeMockBooking(razorpay_order_id, razorpay_payment_id);
       if (mockBooking) {
-        let meetLink = "https://meet.google.com/mock-meet-room";
-
-        // Try booking on Google Calendar even in mock mode if API is configured
-        if (googleCalendar.isConfigured()) {
-          try {
-            console.log("Mock payment verified. Syncing booking to Google Calendar...");
-            const packageId = getPackageNameByPrice(mockBooking.amountPaid, mockBooking.currency);
-            const result = await googleCalendar.bookSlot(mockBooking.timeSlotId, {
-              name: mockBooking.user.name,
-              email: mockBooking.user.email,
-              birthDate: mockBooking.birthDate.toDateString(),
-              birthTime: mockBooking.birthTime,
-              birthPlace: mockBooking.birthPlace,
-              gender: mockBooking.gender,
-              notes: mockBooking.notes || "",
-            }, packageId);
-            meetLink = result.meetLink;
-          } catch (gcalErr: any) {
-            console.error("Mock GCal book failed:", gcalErr.message || gcalErr);
-          }
-        }
-
-        try {
-          await sendBookingConfirmation({
-            id: mockBooking.id,
-            amountPaid: mockBooking.amountPaid,
-            currency: mockBooking.currency,
-            birthDate: mockBooking.birthDate,
-            birthTime: mockBooking.birthTime,
-            birthPlace: mockBooking.birthPlace,
-            notes: mockBooking.notes,
-            packageName: "Vedic & Lal Kitab Consultation",
-            user: {
-              name: mockBooking.user.name,
-              email: mockBooking.user.email,
-            },
-            timeSlot: {
-              startTime: mockBooking.timeSlot.startTime,
-              endTime: mockBooking.timeSlot.endTime,
-            },
-            googleMeetLink: meetLink,
-          });
-        } catch (emailErr) {
-          console.error("Mock email send failed:", emailErr);
-        }
         return NextResponse.json({ success: true, message: "Mock payment verified and finalized in memory." });
       }
       return NextResponse.json({ success: false, error: "Booking order not found in mock." }, { status: 400 });
@@ -93,7 +101,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: true, message: "Payment verified and booking confirmed!" });
       } catch (dbErr: any) {
         console.warn("DB connection lost during finalizeBooking. Finalizing in-memory mock instead.");
-        const mockBooking = mockDb.finalizeBooking(razorpay_order_id, razorpay_payment_id);
+        const mockBooking = await finalizeMockBooking(razorpay_order_id, razorpay_payment_id);
         if (mockBooking) {
           return NextResponse.json({ success: true, message: "Finalized in mockDb fallback." });
         }

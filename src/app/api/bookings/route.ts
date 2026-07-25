@@ -1,14 +1,56 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { razorpay } from "@/lib/razorpay";
+import { paypal } from "@/lib/paypal";
 import { mockDb } from "@/lib/mockDb";
 import { googleCalendar } from "@/lib/googleCalendar";
+import { getPackage, getPrice, getAmountInSubunits, isSupportedCurrency, type CurrencyCode } from "@/lib/pricing";
 
-const PACKAGES: Record<string, { title: string; priceINR: number; priceUSD: number }> = {
-  general: { title: "General Consultation (Unlimited Questions)", priceINR: 1999, priceUSD: 25 },
-  marriage: { title: "Marriage Match & Couple Consultation", priceINR: 2999, priceUSD: 40 },
-  career: { title: "General Consultation (Unlimited Questions)", priceINR: 1999, priceUSD: 25 },
-};
+type CheckoutOrderResult =
+  | { ok: true; provider: "razorpay"; orderId: string; razorpayKeyId: string }
+  | { ok: true; provider: "paypal"; orderId: string; paypalClientId: string }
+  | { ok: false; status: number; error: string };
+
+// INR settles via Razorpay (this account's domestic processor). USD/CAD route through PayPal
+// since Razorpay rejected international payments for this account.
+async function createCheckoutOrder(
+  currency: CurrencyCode,
+  price: number,
+  amountInSubunits: number,
+  referenceId: string
+): Promise<CheckoutOrderResult> {
+  if (currency === "INR") {
+    let orderId: string;
+    try {
+      const razorpayOrder = await razorpay.orders.create({
+        amount: amountInSubunits,
+        currency,
+        receipt: referenceId,
+      });
+      orderId = razorpayOrder.id;
+    } catch (razorpayErr: any) {
+      console.error("Razorpay Order Creation Error (using mock ID instead):", razorpayErr);
+      orderId = `order_mock_${Date.now()}`;
+    }
+    return { ok: true, provider: "razorpay", orderId, razorpayKeyId: process.env.RAZORPAY_KEY_ID || "MOCK_KEY_ID" };
+  }
+
+  if (!paypal.isConfigured()) {
+    return {
+      ok: false,
+      status: 503,
+      error: "PayPal checkout is not configured yet. Please try the INR plan or contact support.",
+    };
+  }
+
+  try {
+    const paypalOrder = await paypal.createOrder(price, currency, referenceId);
+    return { ok: true, provider: "paypal", orderId: paypalOrder.id, paypalClientId: paypal.clientId };
+  } catch (paypalErr: any) {
+    console.error("PayPal Order Creation Error:", paypalErr);
+    return { ok: false, status: 502, error: "Failed to initiate PayPal checkout. Please try again shortly." };
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -16,7 +58,7 @@ export async function POST(req: Request) {
     const {
       packageId,
       timeSlotId,
-      currency, // "USD" or "INR"
+      currency, // "USD", "INR", or "CAD"
       name,
       email,
       phone,
@@ -35,7 +77,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const selectedPackage = PACKAGES[packageId] || PACKAGES.general;
+    if (!isSupportedCurrency(currency)) {
+      return NextResponse.json(
+        { success: false, error: "Unsupported currency." },
+        { status: 400 }
+      );
+    }
+
+    const selectedPackage = getPackage(packageId);
 
     // Attempt DB operations
     try {
@@ -112,20 +161,24 @@ export async function POST(req: Request) {
       }
 
       // 4. Calculate amount
-      const price = currency === "INR" ? selectedPackage.priceINR : selectedPackage.priceUSD;
-      const amountInSubunits = Math.round(price * 100);
+      const price = getPrice(selectedPackage, currency);
+      const amountInSubunits = getAmountInSubunits(selectedPackage, currency);
 
-      // 5. Create Razorpay Order
-      let razorpayOrder;
-      try {
-        razorpayOrder = await razorpay.orders.create({
-          amount: amountInSubunits,
-          currency: currency,
-          receipt: `rcpt_${user.id.substring(0, 8)}_${Date.now()}`,
-        });
-      } catch (razorpayErr: any) {
-        console.error("Razorpay Order Creation Error (using mock ID instead):", razorpayErr);
-        razorpayOrder = { id: `order_mock_${Date.now()}` };
+      // 5. Create the checkout order with the right processor for this currency
+      const order = await createCheckoutOrder(
+        currency,
+        price,
+        amountInSubunits,
+        `rcpt_${user.id.substring(0, 8)}_${Date.now()}`
+      );
+      if (!order.ok) {
+        // Release the slot we locked in steps 1-2 — no booking will be created for this request.
+        try {
+          await db.timeSlot.update({ where: { id: timeSlotId }, data: { isBooked: false } });
+        } catch (releaseErr) {
+          console.error("Failed to release slot after checkout order creation failure:", releaseErr);
+        }
+        return NextResponse.json({ success: false, error: order.error }, { status: order.status });
       }
 
       // 6. Create Pending Booking
@@ -138,7 +191,7 @@ export async function POST(req: Request) {
           birthPlace,
           gender,
           notes,
-          orderId: razorpayOrder.id,
+          orderId: order.orderId,
           paymentStatus: "PENDING",
           amountPaid: price,
           currency,
@@ -148,8 +201,11 @@ export async function POST(req: Request) {
       return NextResponse.json({
         success: true,
         booking,
-        razorpayOrderId: razorpayOrder.id,
-        razorpayKeyId: process.env.RAZORPAY_KEY_ID || "MOCK_KEY_ID",
+        provider: order.provider,
+        razorpayOrderId: order.provider === "razorpay" ? order.orderId : undefined,
+        razorpayKeyId: order.provider === "razorpay" ? order.razorpayKeyId : undefined,
+        paypalOrderId: order.provider === "paypal" ? order.orderId : undefined,
+        paypalClientId: order.provider === "paypal" ? order.paypalClientId : undefined,
         amount: amountInSubunits,
         currency,
         user,
@@ -177,23 +233,12 @@ export async function POST(req: Request) {
       }
 
       const mockUser = mockDb.getOrCreateUser(name, email, phone);
-      const price = currency === "INR" ? selectedPackage.priceINR : selectedPackage.priceUSD;
-      const amountInSubunits = Math.round(price * 100);
+      const price = getPrice(selectedPackage, currency);
+      const amountInSubunits = getAmountInSubunits(selectedPackage, currency);
 
-      // Create a real Razorpay order in fallback mode if keys are available
-      let orderId = `order_mock_${Date.now()}`;
-      try {
-        if (process.env.RAZORPAY_KEY_SECRET && process.env.RAZORPAY_KEY_ID) {
-          const razorpayOrder = await razorpay.orders.create({
-            amount: amountInSubunits,
-            currency: currency,
-            receipt: `rcpt_mock_${Date.now()}`,
-          });
-          orderId = razorpayOrder.id;
-          console.log(`Successfully created real Razorpay order ${orderId} in database fallback mode.`);
-        }
-      } catch (rzpErr) {
-        console.error("Failed to generate real Razorpay order in database fallback mode:", rzpErr);
+      const order = await createCheckoutOrder(currency, price, amountInSubunits, `rcpt_mock_${Date.now()}`);
+      if (!order.ok) {
+        return NextResponse.json({ success: false, error: order.error }, { status: order.status });
       }
 
       let booking;
@@ -215,7 +260,7 @@ export async function POST(req: Request) {
           birthPlace,
           gender,
           notes,
-          orderId,
+          orderId: order.orderId,
           amountPaid: price,
           currency,
         });
@@ -238,7 +283,7 @@ export async function POST(req: Request) {
           birthPlace,
           gender,
           notes,
-          orderId,
+          orderId: order.orderId,
           amountPaid: price,
           currency,
         });
@@ -250,8 +295,11 @@ export async function POST(req: Request) {
       return NextResponse.json({
         success: true,
         booking,
-        razorpayOrderId: orderId,
-        razorpayKeyId: process.env.RAZORPAY_KEY_ID || "MOCK_KEY_ID",
+        provider: order.provider,
+        razorpayOrderId: order.provider === "razorpay" ? order.orderId : undefined,
+        razorpayKeyId: order.provider === "razorpay" ? order.razorpayKeyId : undefined,
+        paypalOrderId: order.provider === "paypal" ? order.orderId : undefined,
+        paypalClientId: order.provider === "paypal" ? order.paypalClientId : undefined,
         amount: amountInSubunits,
         currency,
         user: mockUser,

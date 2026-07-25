@@ -1,17 +1,25 @@
 import { db } from "@/lib/db";
 import { googleCalendar } from "@/lib/googleCalendar";
 import { sendBookingConfirmation } from "@/lib/email";
+import { mockDb } from "@/lib/mockDb";
+import { PACKAGES, isSupportedCurrency } from "@/lib/pricing";
 
 // Helper to resolve package name by price and currency
 export function getPackageNameByPrice(price: number, currency: string): string {
-  if (currency === "INR") {
-    if (price === 1999) return "General Consultation (Unlimited Questions)";
-    if (price === 2999) return "Marriage Match & Couple Consultation";
-  } else {
-    if (price === 25) return "General Consultation (Unlimited Questions)";
-    if (price === 40) return "Marriage Match & Couple Consultation";
+  if (isSupportedCurrency(currency)) {
+    const match = PACKAGES.find((pkg) => pkg.prices[currency] === price);
+    if (match) return match.title;
   }
   return "Premium Astrology Consultation";
+}
+
+// Helper to resolve package id by price and currency (used to pick GCal duration/slot type)
+export function getPackageIdByPrice(price: number, currency: string): string {
+  if (isSupportedCurrency(currency)) {
+    const match = PACKAGES.find((pkg) => pkg.prices[currency] === price);
+    if (match) return match.id;
+  }
+  return "general";
 }
 
 export async function finalizeBooking(orderId: string, paymentId: string) {
@@ -49,7 +57,7 @@ export async function finalizeBooking(orderId: string, paymentId: string) {
   if (googleCalendar.isConfigured()) {
     try {
       console.log("Finalizing booking details on Google Calendar...");
-      const packageId = updatedBooking.amountPaid === 40 || updatedBooking.amountPaid === 2999 ? "marriage" : "general";
+      const packageId = getPackageIdByPrice(updatedBooking.amountPaid, updatedBooking.currency);
       const result = await googleCalendar.bookSlot(updatedBooking.timeSlotId, {
         name: updatedBooking.user.name,
         email: updatedBooking.user.email,
@@ -91,6 +99,61 @@ export async function finalizeBooking(orderId: string, paymentId: string) {
   } catch (emailErr) {
     console.error("Failed to send booking confirmation email:", emailErr);
   }
+}
+
+// Finalizes a booking that only exists in the in-memory mock DB (Postgres unreachable),
+// mirroring finalizeBooking's GCal + email side effects. Shared by both payment providers'
+// mock-order fallback paths.
+export async function finalizeMockBooking(orderId: string, paymentId: string) {
+  const mockBooking = mockDb.finalizeBooking(orderId, paymentId);
+  if (!mockBooking) return null;
+
+  let meetLink = "https://meet.google.com/mock-meet-room";
+
+  if (googleCalendar.isConfigured()) {
+    try {
+      console.log("Mock payment verified. Syncing booking to Google Calendar...");
+      const packageId = getPackageIdByPrice(mockBooking.amountPaid, mockBooking.currency);
+      const result = await googleCalendar.bookSlot(mockBooking.timeSlotId, {
+        name: mockBooking.user.name,
+        email: mockBooking.user.email,
+        birthDate: mockBooking.birthDate.toDateString(),
+        birthTime: mockBooking.birthTime,
+        birthPlace: mockBooking.birthPlace,
+        gender: mockBooking.gender,
+        notes: mockBooking.notes || "",
+      }, packageId);
+      meetLink = result.meetLink;
+    } catch (gcalErr: any) {
+      console.error("Mock GCal book failed:", gcalErr.message || gcalErr);
+    }
+  }
+
+  try {
+    await sendBookingConfirmation({
+      id: mockBooking.id,
+      amountPaid: mockBooking.amountPaid,
+      currency: mockBooking.currency,
+      birthDate: mockBooking.birthDate,
+      birthTime: mockBooking.birthTime,
+      birthPlace: mockBooking.birthPlace,
+      notes: mockBooking.notes,
+      packageName: "Vedic & Lal Kitab Consultation",
+      user: {
+        name: mockBooking.user.name,
+        email: mockBooking.user.email,
+      },
+      timeSlot: {
+        startTime: mockBooking.timeSlot.startTime,
+        endTime: mockBooking.timeSlot.endTime,
+      },
+      googleMeetLink: meetLink,
+    });
+  } catch (emailErr) {
+    console.error("Mock email send failed:", emailErr);
+  }
+
+  return mockBooking;
 }
 
 export async function releaseBookingSlot(orderId: string) {

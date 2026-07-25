@@ -1,47 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Menu, X } from "lucide-react";
+
+const NAV_ITEMS = [
+  { href: "/", label: "Home" },
+  { href: "#services", label: "Consultations" },
+  { href: "#about", label: "About" },
+  { href: "#testimonials", label: "Reviews" },
+  { href: "#faq", label: "FAQ" },
+];
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleMenu = () => setIsOpen((prev) => !prev);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 12);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   return (
-    <header className="header">
+    <header className={`header ${isScrolled ? "is-scrolled" : ""}`}>
       <div className="container nav-container">
         <Link href="/" className="logo">
-          <Sparkles size={24} style={{ color: "var(--gold-primary)" }} />
+          <motion.span
+            style={{ display: "inline-flex", color: "var(--gold-primary)" }}
+            animate={{ rotate: [0, 15, -10, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Sparkles size={24} />
+          </motion.span>
           <span>AstroShubham</span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav style={{ display: "flex", alignItems: "center" }}>
           <ul className="nav-links">
-            <li>
-              <Link href="/" className="nav-link">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href="#services" className="nav-link">
-                Consultations
-              </Link>
-            </li>
-            <li>
-              <Link href="#about" className="nav-link">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link href="#faq" className="nav-link">
-                FAQ
-              </Link>
-            </li>
+            {NAV_ITEMS.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="nav-link">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
             <li>
               <Link href="#book" className="btn btn-secondary" style={{ padding: "0.5rem 1.2rem", fontSize: "0.9rem" }}>
                 Book Now
@@ -51,48 +66,84 @@ export default function Header() {
         </nav>
 
         {/* Burger menu for Mobile */}
-        <button className="burger" onClick={toggleMenu} aria-label="Toggle menu">
-          {isOpen ? <X size={28} /> : <Menu size={28} />}
+        <button className="burger" onClick={toggleMenu} aria-label="Toggle menu" aria-expanded={isOpen}>
+          <AnimatePresence mode="wait" initial={false}>
+            {isOpen ? (
+              <motion.span
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                style={{ display: "flex" }}
+              >
+                <X size={28} />
+              </motion.span>
+            ) : (
+              <motion.span
+                key="menu"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                style={{ display: "flex" }}
+              >
+                <Menu size={28} />
+              </motion.span>
+            )}
+          </AnimatePresence>
         </button>
       </div>
 
       {/* Mobile Drawer */}
-      {isOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: "80px",
-            left: 0,
-            width: "100%",
-            height: "calc(100vh - 80px)",
-            backgroundColor: "rgba(255, 253, 245, 0.97)",
-            backdropFilter: "blur(20px)",
-            zIndex: 99,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "2.5rem",
-            borderTop: "1px solid rgba(180, 150, 50, 0.15)",
-          }}
-        >
-          <Link href="/" className="nav-link" style={{ fontSize: "1.5rem" }} onClick={toggleMenu}>
-            Home
-          </Link>
-          <Link href="#services" className="nav-link" style={{ fontSize: "1.5rem" }} onClick={toggleMenu}>
-            Consultations
-          </Link>
-          <Link href="#about" className="nav-link" style={{ fontSize: "1.5rem" }} onClick={toggleMenu}>
-            About
-          </Link>
-          <Link href="#faq" className="nav-link" style={{ fontSize: "1.5rem" }} onClick={toggleMenu}>
-            FAQ
-          </Link>
-          <Link href="#book" className="btn btn-primary" style={{ fontSize: "1.2rem" }} onClick={toggleMenu}>
-            Book Now
-          </Link>
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: "fixed",
+              top: "72px",
+              left: 0,
+              width: "100%",
+              height: "calc(100vh - 72px)",
+              backgroundColor: "rgba(255, 253, 245, 0.97)",
+              backdropFilter: "blur(20px)",
+              zIndex: 99,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "2.5rem",
+              borderTop: "1px solid rgba(180, 150, 50, 0.15)",
+            }}
+          >
+            {NAV_ITEMS.map((item, i) => (
+              <motion.div
+                key={item.href}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 * i, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <Link href={item.href} className="nav-link" style={{ fontSize: "1.5rem" }} onClick={toggleMenu}>
+                  {item.label}
+                </Link>
+              </motion.div>
+            ))}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * NAV_ITEMS.length, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Link href="#book" className="btn btn-primary" style={{ fontSize: "1.2rem" }} onClick={toggleMenu}>
+                Book Now
+              </Link>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

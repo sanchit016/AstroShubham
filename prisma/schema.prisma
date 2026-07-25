@@ -55,3 +55,13 @@ enum PaymentStatus {
   SUCCESS
   FAILED
 }
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  name      String
+  role      String   // e.g. "Marriage Consultation, Toronto"
+  quote     String
+  rating    Int      @default(5)
+  approved  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

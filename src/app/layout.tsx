@@ -95,7 +95,7 @@ const jsonLd = {
   name: "AstroShubham",
   url: siteUrl,
   logo: `${siteUrl}/og-image.png`,
-  image: `${siteUrl}/shubham.jpg`,
+  image: `${siteUrl}/og-image.png`,
   description:
     "Expert Vedic & Lal Kitab astrology consultations by Shubham Chhabra. Personalized career, marriage, health, and family guidance with actionable remedies.",
   priceRange: "$25 - $40",
@@ -133,11 +133,6 @@ const jsonLd = {
       },
     ],
   },
-  sameAs: [
-    "https://instagram.com",
-    "https://twitter.com",
-    "https://youtube.com",
-  ],
 };
 
 export default function RootLayout({
