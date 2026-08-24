@@ -128,7 +128,9 @@ export const googleCalendar = {
           return currentStart < bookedEnd && bookedStart < sessionEndWithBuffer;
         });
 
-        if (!hasOverlap) {
+        const isFuture = currentStart > Date.now();
+
+        if (!hasOverlap && isFuture) {
           slots.push({
             id: `gcal-${block.id}-${currentStart}`,
             startTime: new Date(currentStart).toISOString(),
