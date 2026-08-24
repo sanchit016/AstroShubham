@@ -5,6 +5,8 @@ import { googleCalendar } from "@/lib/googleCalendar";
 
 export async function GET(req: Request) {
   try {
+    let gcalError: string | null = null;
+
     // 1. Attempt to fetch from Google Calendar if configured
     if (googleCalendar.isConfigured()) {
       try {
@@ -13,16 +15,16 @@ export async function GET(req: Request) {
         console.log(`Google Calendar configured. Fetching available slots from GCal API for package: ${packageId}...`);
         const slots = await googleCalendar.getAvailableSlots(packageId);
         return NextResponse.json({ success: true, slots, source: "google_calendar" });
-      } catch (gcalErr: any) {
-        console.error("Failed to fetch slots from Google Calendar API. Falling back to database:", gcalErr.message || gcalErr);
+      } catch (err: any) {
+        gcalError = err?.message || String(err);
+        console.error("Failed to fetch slots from Google Calendar API. Falling back to database:", gcalError);
       }
     } else {
-      console.log("Google Calendar credentials not fully configured in .env. Attempting DB query...");
+      gcalError = "Google Calendar environment variables not fully configured (missing clientId, clientSecret, or refreshToken).";
+      console.log(gcalError);
     }
 
     // 2. Fetch from DB if Google Calendar is not configured or failed.
-    // No fake/auto-seeded slots here — an empty result means no real availability exists yet,
-    // and customers should see that honestly rather than being offered times nobody opened up.
     try {
       const slots = await db.timeSlot.findMany({
         where: {
@@ -36,19 +38,25 @@ export async function GET(req: Request) {
         },
       });
 
-      return NextResponse.json({ success: true, slots, source: "database" });
+      return NextResponse.json({ success: true, slots, source: "database", gcalError });
     } catch (dbErr: any) {
-      // Real Postgres connection unreachable. In production, surface that honestly instead of
-      // inventing availability. In local dev (no DB configured), fall back to the in-memory
-      // mock DB purely so the booking funnel can still be previewed/tested.
       if (process.env.NODE_ENV === "production") {
         console.error("Database connection issue and no fallback available in production:", dbErr.message || dbErr);
-        return NextResponse.json({ success: true, slots: [], source: "unavailable" });
+        return NextResponse.json({
+          success: true,
+          slots: [],
+          source: "unavailable",
+          debug: {
+            gcalConfigured: googleCalendar.isConfigured(),
+            gcalError,
+            dbError: dbErr.message || "Database unreachable",
+          },
+        });
       }
 
       console.warn("Database connection issue. Falling back to in-memory mock DB (development only).");
       const slots = mockDb.getAvailableSlots();
-      return NextResponse.json({ success: true, slots, source: "mock_db", fallbackMode: true });
+      return NextResponse.json({ success: true, slots, source: "mock_db", fallbackMode: true, gcalError });
     }
 
   } catch (error: any) {
