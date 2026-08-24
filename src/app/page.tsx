@@ -289,7 +289,25 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ABOUT SECTION */}
+        {/* BOOKING SECTION (3RD) */}
+        <section id="book" aria-label="Book a consultation" className="section" style={{ padding: "6rem 0" }}>
+          <div className="container">
+            <motion.h2
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportOnce}
+              variants={fadeUp}
+              style={{ fontSize: "2rem", marginBottom: "3rem" }}
+            >
+              Schedule Consultation
+            </motion.h2>
+            <motion.div initial="hidden" whileInView="show" viewport={viewportOnce} variants={fadeIn}>
+              <BookingWidget />
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ABOUT SECTION (4TH) */}
         <section id="about" aria-label="About Shubham Chhabra" className="section" style={{ background: "rgba(248, 243, 227, 0.6)", padding: "6rem 0" }}>
           <div className="nebula-glow-2" />
           <div className="container" style={{ maxWidth: "700px" }}>
@@ -316,26 +334,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* TESTIMONIALS SECTION */}
+        {/* TESTIMONIALS SECTION (5TH) */}
         <Testimonials />
-
-        {/* BOOKING SECTION */}
-        <section id="book" aria-label="Book a consultation" className="section" style={{ padding: "6rem 0" }}>
-          <div className="container">
-            <motion.h2
-              initial="hidden"
-              whileInView="show"
-              viewport={viewportOnce}
-              variants={fadeUp}
-              style={{ fontSize: "2rem", marginBottom: "3rem" }}
-            >
-              Schedule Consultation
-            </motion.h2>
-            <motion.div initial="hidden" whileInView="show" viewport={viewportOnce} variants={fadeIn}>
-              <BookingWidget />
-            </motion.div>
-          </div>
-        </section>
 
         {/* FAQ SECTION */}
         <section id="faq" aria-label="Frequently Asked Questions" className="section" style={{ background: "rgba(248, 243, 227, 0.6)", padding: "6rem 0" }}>
