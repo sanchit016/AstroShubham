@@ -4,7 +4,7 @@ import { razorpay } from "@/lib/razorpay";
 import { paypal } from "@/lib/paypal";
 import { mockDb } from "@/lib/mockDb";
 import { googleCalendar } from "@/lib/googleCalendar";
-import { getPackage, getPrice, getAmountInSubunits, isSupportedCurrency, type CurrencyCode } from "@/lib/pricing";
+import { getPackage, getPrice, getAmountInSubunits, getDiscountedPrice, getDiscountedAmountInSubunits, isSupportedCurrency, type CurrencyCode } from "@/lib/pricing";
 
 type CheckoutOrderResult =
   | { ok: true; provider: "razorpay"; orderId: string; razorpayKeyId: string }
@@ -67,6 +67,7 @@ export async function POST(req: Request) {
       birthPlace,
       gender,
       notes,
+      couponCode,
     } = body;
 
     // 1. Validate mandatory fields
@@ -160,9 +161,9 @@ export async function POST(req: Request) {
         });
       }
 
-      // 4. Calculate amount
-      const price = getPrice(selectedPackage, currency);
-      const amountInSubunits = getAmountInSubunits(selectedPackage, currency);
+      // 4. Calculate amount (with optional promo/coupon discount)
+      const price = getDiscountedPrice(selectedPackage, currency, couponCode);
+      const amountInSubunits = getDiscountedAmountInSubunits(selectedPackage, currency, couponCode);
 
       // 5. Create the checkout order with the right processor for this currency
       const order = await createCheckoutOrder(
@@ -233,8 +234,8 @@ export async function POST(req: Request) {
       }
 
       const mockUser = mockDb.getOrCreateUser(name, email, phone);
-      const price = getPrice(selectedPackage, currency);
-      const amountInSubunits = getAmountInSubunits(selectedPackage, currency);
+      const price = getDiscountedPrice(selectedPackage, currency, couponCode);
+      const amountInSubunits = getDiscountedAmountInSubunits(selectedPackage, currency, couponCode);
 
       const order = await createCheckoutOrder(currency, price, amountInSubunits, `rcpt_mock_${Date.now()}`);
       if (!order.ok) {

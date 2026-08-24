@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Calendar as CalendarIcon, Clock, ArrowRight, Check, Sparkles, AlertCircle } from "lucide-react";
-import { PACKAGES, formatPrice, type PackageDefinition, type CurrencyCode } from "@/lib/pricing";
+import { Calendar as CalendarIcon, Clock, ArrowRight, Check, Sparkles, AlertCircle, Tag } from "lucide-react";
+import { PACKAGES, formatPrice, formatDiscountedPrice, getDiscountedPrice, validateCoupon, type PackageDefinition, type CurrencyCode } from "@/lib/pricing";
 import { useCurrency, setGlobalCurrency } from "@/lib/useCurrency";
 
 const stepVariants: Variants = {
@@ -72,6 +72,31 @@ export default function BookingWidget() {
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Coupon code states
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<string>("");
+  const [couponStatus, setCouponStatus] = useState<{ success?: string; error?: string }>({});
+
+  const handleApplyCoupon = () => {
+    if (!couponInput.trim()) return;
+    const coupon = validateCoupon(couponInput);
+    if (coupon) {
+      setAppliedCoupon(coupon.code);
+      setCouponStatus({ success: `${coupon.description}` });
+      setPaypalOrder(null);
+    } else {
+      setAppliedCoupon("");
+      setCouponStatus({ error: "Invalid promo / coupon code." });
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon("");
+    setCouponInput("");
+    setCouponStatus({});
+    setPaypalOrder(null);
+  };
 
   // PayPal checkout state (USD/CAD route through PayPal since Razorpay only settles INR here)
   const [paypalOrder, setPaypalOrder] = useState<{ orderId: string; clientId: string; currency: CurrencyCode } | null>(null);
@@ -312,6 +337,7 @@ export default function BookingWidget() {
           packageId: selectedPackage.id,
           timeSlotId: selectedSlotId,
           currency,
+          couponCode: appliedCoupon || undefined,
           ...formData,
         }),
       });
@@ -984,6 +1010,58 @@ export default function BookingWidget() {
               </div>
             </div>
 
+            {/* Promo / Coupon Code Section */}
+            <div style={{ padding: "0.8rem", background: "rgba(255, 255, 255, 0.02)", border: "1px solid var(--border-color)", borderRadius: "6px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                  <Tag size={13} style={{ color: "var(--gold-primary)" }} /> HAVE A COUPON / PROMO CODE?
+                </span>
+                {appliedCoupon && (
+                  <span style={{ fontSize: "0.75rem", color: "#10b981", fontWeight: "600" }}>APPLIED</span>
+                )}
+              </div>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                  placeholder="Enter code (e.g. TEST1)"
+                  className="form-input"
+                  style={{ textTransform: "uppercase", fontSize: "0.85rem", padding: "0.45rem 0.8rem", flex: 1 }}
+                  disabled={!!appliedCoupon}
+                />
+                {appliedCoupon ? (
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="btn btn-secondary"
+                    style={{ padding: "0.45rem 0.9rem", fontSize: "0.8rem", whiteSpace: "nowrap" }}
+                  >
+                    Remove
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleApplyCoupon}
+                    className="btn btn-secondary"
+                    style={{ padding: "0.45rem 1rem", fontSize: "0.8rem", whiteSpace: "nowrap" }}
+                  >
+                    Apply
+                  </button>
+                )}
+              </div>
+              {couponStatus.success && (
+                <span style={{ fontSize: "0.8rem", color: "#10b981", display: "block", marginTop: "0.4rem" }}>
+                  ✓ {couponStatus.success}
+                </span>
+              )}
+              {couponStatus.error && (
+                <span style={{ fontSize: "0.8rem", color: "#f87171", display: "block", marginTop: "0.4rem" }}>
+                  ✕ {couponStatus.error}
+                </span>
+              )}
+            </div>
+
             <hr style={{ border: "none", borderTop: "1px solid var(--border-color)" }} />
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -991,9 +1069,16 @@ export default function BookingWidget() {
                 <span style={{ fontSize: "1rem", fontWeight: "bold", color: "var(--text-primary)", display: "block" }}>Total Amount</span>
                 <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>{selectedPackage.duration} session</span>
               </div>
-              <span style={{ fontSize: "1.8rem", fontWeight: "bold", color: "var(--text-primary)" }}>
-                {formatPrice(selectedPackage, currency)}
-              </span>
+              <div style={{ textAlign: "right" }}>
+                {appliedCoupon && (
+                  <span style={{ fontSize: "1rem", color: "var(--text-muted)", textDecoration: "line-through", marginRight: "0.6rem" }}>
+                    {formatPrice(selectedPackage, currency)}
+                  </span>
+                )}
+                <span style={{ fontSize: "1.8rem", fontWeight: "bold", color: appliedCoupon ? "var(--gold-primary)" : "var(--text-primary)" }}>
+                  {formatDiscountedPrice(selectedPackage, currency, appliedCoupon)}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -1125,8 +1210,8 @@ export default function BookingWidget() {
               {submitting
                 ? "Initiating..."
                 : currency === "INR"
-                ? `Confirm & Pay ${formatPrice(selectedPackage, currency)}`
-                : `Continue to Payment (${formatPrice(selectedPackage, currency)})`}
+                ? `Confirm & Pay ${formatDiscountedPrice(selectedPackage, currency, appliedCoupon)}`
+                : `Continue to Payment (${formatDiscountedPrice(selectedPackage, currency, appliedCoupon)})`}
             </motion.button>
           )}
         </div>

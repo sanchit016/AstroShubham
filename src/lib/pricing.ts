@@ -50,7 +50,42 @@ export function isSupportedCurrency(value: unknown): value is CurrencyCode {
   return typeof value === "string" && (SUPPORTED_CURRENCIES as string[]).includes(value);
 }
 
+export interface CouponDefinition {
+  code: string;
+  prices: Record<CurrencyCode, number>;
+  description: string;
+}
+
+export const VALID_COUPONS: Record<string, CouponDefinition> = {
+  TEST1: {
+    code: "TEST1",
+    prices: { INR: 1, USD: 1, CAD: 1 },
+    description: "Verification Coupon (₹1 / $1)",
+  },
+  SANCHIT1: {
+    code: "SANCHIT1",
+    prices: { INR: 1, USD: 1, CAD: 1 },
+    description: "Admin Testing Coupon (₹1 / $1)",
+  },
+};
+
+export function validateCoupon(code: string): CouponDefinition | null {
+  if (!code) return null;
+  const normalized = code.trim().toUpperCase();
+  return VALID_COUPONS[normalized] || null;
+}
+
 export function getPrice(pkg: PackageDefinition, currency: CurrencyCode): number {
+  return pkg.prices[currency];
+}
+
+export function getDiscountedPrice(pkg: PackageDefinition, currency: CurrencyCode, couponCode?: string): number {
+  if (couponCode) {
+    const coupon = validateCoupon(couponCode);
+    if (coupon) {
+      return coupon.prices[currency];
+    }
+  }
   return pkg.prices[currency];
 }
 
@@ -58,6 +93,15 @@ export function getAmountInSubunits(pkg: PackageDefinition, currency: CurrencyCo
   return Math.round(getPrice(pkg, currency) * 100);
 }
 
+export function getDiscountedAmountInSubunits(pkg: PackageDefinition, currency: CurrencyCode, couponCode?: string): number {
+  return Math.round(getDiscountedPrice(pkg, currency, couponCode) * 100);
+}
+
 export function formatPrice(pkg: PackageDefinition, currency: CurrencyCode): string {
   return `${CURRENCY_SYMBOLS[currency]}${getPrice(pkg, currency).toLocaleString(currency === "INR" ? "en-IN" : "en-US")}`;
+}
+
+export function formatDiscountedPrice(pkg: PackageDefinition, currency: CurrencyCode, couponCode?: string): string {
+  const price = getDiscountedPrice(pkg, currency, couponCode);
+  return `${CURRENCY_SYMBOLS[currency]}${price.toLocaleString(currency === "INR" ? "en-IN" : "en-US")}`;
 }
