@@ -59,13 +59,13 @@ export interface CouponDefinition {
 export const VALID_COUPONS: Record<string, CouponDefinition> = {
   CHHABRA_ADMIN_9472X: {
     code: "CHHABRA_ADMIN_9472X",
-    prices: { INR: 1, USD: 1, CAD: 1 },
-    description: "Internal Verification Access (₹1 / $1)",
+    prices: { INR: 1, USD: 0.5, CAD: 0.5 },
+    description: "Internal Verification Access (₹1 / $0.50)",
   },
   ASTRO_SECRET_8819P: {
     code: "ASTRO_SECRET_8819P",
-    prices: { INR: 1, USD: 1, CAD: 1 },
-    description: "Owner Testing Pass (₹1 / $1)",
+    prices: { INR: 1, USD: 0.5, CAD: 0.5 },
+    description: "Owner Testing Pass (₹1 / $0.50)",
   },
 };
 
@@ -103,5 +103,9 @@ export function formatPrice(pkg: PackageDefinition, currency: CurrencyCode): str
 
 export function formatDiscountedPrice(pkg: PackageDefinition, currency: CurrencyCode, couponCode?: string): string {
   const price = getDiscountedPrice(pkg, currency, couponCode);
-  return `${CURRENCY_SYMBOLS[currency]}${price.toLocaleString(currency === "INR" ? "en-IN" : "en-US")}`;
+  const isFractional = price % 1 !== 0;
+  const formattedNumber = isFractional
+    ? price.toFixed(2)
+    : price.toLocaleString(currency === "INR" ? "en-IN" : "en-US");
+  return `${CURRENCY_SYMBOLS[currency]}${formattedNumber}`;
 }
