@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Calendar as CalendarIcon, Clock, ArrowRight, Check, Sparkles, AlertCircle } from "lucide-react";
 import { PACKAGES, formatPrice, type PackageDefinition, type CurrencyCode } from "@/lib/pricing";
-import { useCurrency } from "@/lib/useCurrency";
+import { useCurrency, setGlobalCurrency } from "@/lib/useCurrency";
 
 const stepVariants: Variants = {
   enter: (direction: number) => ({ opacity: 0, x: direction > 0 ? 24 : -24 }),
@@ -569,7 +569,31 @@ export default function BookingWidget() {
       {/* Step 1: Choose Package */}
       {step === 1 && (
         <motion.div key="step-1" custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit">
-          <h3 style={{ textAlign: "center", marginBottom: "1.8rem", color: "var(--text-primary)" }}>Choose Consultation Plan</h3>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.8rem" }}>
+            <h3 style={{ margin: 0, color: "var(--text-primary)", fontSize: "1.2rem" }}>Choose Consultation Plan</h3>
+            <div style={{ display: "inline-flex", background: "rgba(255, 255, 255, 0.03)", padding: "3px", borderRadius: "6px", border: "1px solid var(--border-color)", gap: "4px" }}>
+              {(["INR", "USD", "CAD"] as CurrencyCode[]).map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setGlobalCurrency(c)}
+                  style={{
+                    padding: "4px 10px",
+                    fontSize: "0.75rem",
+                    fontWeight: "600",
+                    borderRadius: "4px",
+                    border: "none",
+                    cursor: "pointer",
+                    background: currency === c ? "var(--gold-primary)" : "transparent",
+                    color: currency === c ? "#000" : "var(--text-secondary)",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {c === "INR" ? "₹ INR" : c === "USD" ? "$ USD" : "CA$ CAD"}
+                </button>
+              ))}
+            </div>
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {PACKAGES.map((pkg) => (
               <motion.div

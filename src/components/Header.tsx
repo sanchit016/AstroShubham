@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Menu, X } from "lucide-react";
+import { useCurrency, setGlobalCurrency } from "@/lib/useCurrency";
+import type { CurrencyCode } from "@/lib/pricing";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
@@ -14,6 +16,7 @@ const NAV_ITEMS = [
 ];
 
 export default function Header() {
+  const currency = useCurrency();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -57,6 +60,30 @@ export default function Header() {
                 </Link>
               </li>
             ))}
+            <li>
+              <div style={{ display: "inline-flex", background: "rgba(255, 255, 255, 0.05)", padding: "2px", borderRadius: "6px", border: "1px solid var(--border-color)", gap: "2px" }}>
+                {(["INR", "USD", "CAD"] as CurrencyCode[]).map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setGlobalCurrency(c)}
+                    style={{
+                      padding: "4px 8px",
+                      fontSize: "0.75rem",
+                      fontWeight: "600",
+                      borderRadius: "4px",
+                      border: "none",
+                      cursor: "pointer",
+                      background: currency === c ? "var(--gold-primary)" : "transparent",
+                      color: currency === c ? "#000" : "var(--text-secondary)",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    {c === "INR" ? "₹ INR" : c === "USD" ? "$ USD" : "CA$"}
+                  </button>
+                ))}
+              </div>
+            </li>
             <li>
               <Link href="#book" className="btn btn-secondary" style={{ padding: "0.5rem 1.2rem", fontSize: "0.9rem" }}>
                 Book Now

@@ -48,6 +48,27 @@ export default function Footer() {
           </motion.div>
 
           <motion.div variants={fadeUp}>
+            <h4 className="footer-col-title">Legal & Policies</h4>
+            <ul className="footer-links">
+              <li>
+                <Link href="/terms" className="footer-link">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="footer-link">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/refund" className="footer-link">
+                  Refund & Cancellation
+                </Link>
+              </li>
+            </ul>
+          </motion.div>
+
+          <motion.div variants={fadeUp}>
             <h4 className="footer-col-title">Contact</h4>
             <ul className="footer-links">
               <li style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-secondary)" }}>
