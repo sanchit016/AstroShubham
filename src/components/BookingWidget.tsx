@@ -1025,7 +1025,7 @@ export default function BookingWidget() {
                   type="text"
                   value={couponInput}
                   onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                  placeholder="Enter code (e.g. TEST1)"
+                  placeholder="Enter promo code"
                   className="form-input"
                   style={{ textTransform: "uppercase", fontSize: "0.85rem", padding: "0.45rem 0.8rem", flex: 1 }}
                   disabled={!!appliedCoupon}

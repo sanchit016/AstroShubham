@@ -57,15 +57,15 @@ export interface CouponDefinition {
 }
 
 export const VALID_COUPONS: Record<string, CouponDefinition> = {
-  TEST1: {
-    code: "TEST1",
+  CHHABRA_ADMIN_9472X: {
+    code: "CHHABRA_ADMIN_9472X",
     prices: { INR: 1, USD: 1, CAD: 1 },
-    description: "Verification Coupon (₹1 / $1)",
+    description: "Internal Verification Access (₹1 / $1)",
   },
-  SANCHIT1: {
-    code: "SANCHIT1",
+  ASTRO_SECRET_8819P: {
+    code: "ASTRO_SECRET_8819P",
     prices: { INR: 1, USD: 1, CAD: 1 },
-    description: "Admin Testing Coupon (₹1 / $1)",
+    description: "Owner Testing Pass (₹1 / $1)",
   },
 };
 
