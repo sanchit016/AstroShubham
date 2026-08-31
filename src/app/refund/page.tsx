@@ -6,6 +6,9 @@ import { ArrowLeft } from "lucide-react";
 export const metadata = {
   title: "Refund & Cancellation Policy | AstroShubham",
   description: "Clear refund and rescheduling policies for AstroShubham / Chhabra Astrology consultations.",
+  alternates: {
+    canonical: "https://astroshubhamchhabra.com/refund",
+  },
 };
 
 export default function RefundPage() {

@@ -6,6 +6,9 @@ import { ArrowLeft, ShieldAlert } from "lucide-react";
 export const metadata = {
   title: "Terms & Conditions | AstroShubham",
   description: "Terms and conditions and Vedic consultation advisory disclaimer for AstroShubham / Chhabra Astrology.",
+  alternates: {
+    canonical: "https://astroshubhamchhabra.com/terms",
+  },
 };
 
 export default function TermsPage() {

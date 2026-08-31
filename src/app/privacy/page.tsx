@@ -6,6 +6,9 @@ import { ArrowLeft, Lock } from "lucide-react";
 export const metadata = {
   title: "Privacy Policy | AstroShubham",
   description: "Privacy policy and client data confidentiality commitment for AstroShubham / Chhabra Astrology.",
+  alternates: {
+    canonical: "https://astroshubhamchhabra.com/privacy",
+  },
 };
 
 export default function PrivacyPage() {
