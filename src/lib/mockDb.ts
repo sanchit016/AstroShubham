@@ -233,7 +233,7 @@ export const mockDb = {
       role: data.role,
       quote: data.quote,
       rating: data.rating,
-      approved: false,
+      approved: true,
       createdAt: new Date(),
     };
     globalForMocks.mockTestimonials.push(testimonial);

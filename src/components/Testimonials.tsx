@@ -119,6 +119,9 @@ export default function Testimonials() {
         setSubmitError(data.error || "Failed to submit your testimonial.");
         return;
       }
+      if (data.testimonial) {
+        setTestimonials((prev) => [data.testimonial, ...prev]);
+      }
       setSubmitted(true);
       setFormData(initialFormState);
     } catch (err) {
@@ -231,7 +234,7 @@ export default function Testimonials() {
               <CheckCircle2 size={40} style={{ color: "var(--gold-primary)" }} />
               <h3 style={{ color: "var(--text-primary)" }}>Thank you for sharing!</h3>
               <p style={{ fontSize: "0.9rem", maxWidth: "420px" }}>
-                Your testimonial has been submitted and will appear here once it&apos;s reviewed.
+                Your review has been successfully published and is now live below!
               </p>
               <motion.button
                 whileHover={{ scale: 1.03 }}

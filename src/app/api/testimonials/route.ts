@@ -93,7 +93,7 @@ export async function POST(req: Request) {
       role: role || "Client",
       quote,
       rating,
-      approved: false, // held for manual review before it appears publicly
+      approved: true, // auto-approve so client reviews appear immediately
     };
 
     try {
