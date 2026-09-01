@@ -431,7 +431,13 @@ export default function BookingWidget() {
               const verifyRes = await fetch("/api/verify-payment", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ paypalOrderId: paypalOrder.orderId }),
+                body: JSON.stringify({
+                  paypalOrderId: paypalOrder.orderId,
+                  packageId: selectedPackage.id,
+                  timeSlotId: selectedSlotId,
+                  currency,
+                  ...formData,
+                }),
               });
               const verifyData = await verifyRes.json();
               if (verifyData.success) {
