@@ -14,7 +14,7 @@ export async function GET() {
     } catch (dbErr: any) {
       console.warn("Database connection issue. Returning empty list:", dbErr?.message || dbErr);
       const testimonials = mockDb.getTestimonials();
-      return NextResponse.json({ success: true, testimonials, source: "mock_db", fallbackMode: true });
+      return NextResponse.json({ success: true, testimonials, source: "mock_db", fallbackMode: true, dbError: dbErr?.message || String(dbErr) });
     }
   } catch (error: any) {
     console.error("General error in GET /api/testimonials:", error);
