@@ -57,10 +57,16 @@ export async function POST(req: Request) {
     try {
       const testimonial = await db.testimonial.create({ data });
       return NextResponse.json({ success: true, testimonial, source: "database" });
-    } catch (dbErr) {
-      console.warn("Database connection issue. Storing testimonial submission in mock DB.");
+    } catch (dbErr: any) {
+      console.warn("Database connection issue. Storing testimonial submission in mock DB:", dbErr?.message || dbErr);
       const testimonial = mockDb.createTestimonial(data);
-      return NextResponse.json({ success: true, testimonial, source: "mock_db", fallbackMode: true });
+      return NextResponse.json({
+        success: true,
+        testimonial,
+        source: "mock_db",
+        fallbackMode: true,
+        dbError: dbErr?.message || String(dbErr),
+      });
     }
   } catch (error: any) {
     console.error("General error in POST /api/testimonials:", error);
