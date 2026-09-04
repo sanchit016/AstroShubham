@@ -86,48 +86,7 @@ if (!globalForMocks.mockSlots) {
 }
 
 if (!globalForMocks.mockTestimonials) {
-  globalForMocks.mockTestimonials = [
-    {
-      id: "mock-testimonial-1",
-      name: "Priya Sharma",
-      role: "Marriage Consultation",
-      quote:
-        "Shubham ji's Gun Milan reading gave us so much clarity before our wedding. He explained everything in plain language, no fear-mongering, just honest guidance and practical remedies.",
-      rating: 5,
-      approved: true,
-      createdAt: new Date(),
-    },
-    {
-      id: "mock-testimonial-2",
-      name: "Arjun Mehta",
-      role: "Career & Wealth Session",
-      quote:
-        "I was stuck between a job offer and starting my own business. The 10th house analysis he walked me through made the decision obvious. Three months later, things are working out exactly as discussed.",
-      rating: 5,
-      approved: true,
-      createdAt: new Date(),
-    },
-    {
-      id: "mock-testimonial-3",
-      name: "Kavita Iyer",
-      role: "Family & Ancestry Reading",
-      quote:
-        "Incredibly thoughtful session on Pitra Dosha and family harmony. The Lal Kitab remedies were simple to follow and things at home genuinely feel calmer.",
-      rating: 5,
-      approved: true,
-      createdAt: new Date(),
-    },
-    {
-      id: "mock-testimonial-4",
-      name: "Daniel Fischer",
-      role: "General Consultation",
-      quote:
-        "Booked from the US expecting the usual vague answers, got the opposite. Direct, specific, and genuinely helpful guidance on my health and energy concerns.",
-      rating: 4,
-      approved: true,
-      createdAt: new Date(),
-    },
-  ];
+  globalForMocks.mockTestimonials = [];
 }
 
 export const mockDb = {

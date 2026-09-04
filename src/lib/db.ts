@@ -13,21 +13,19 @@ let prismaInstance: PrismaClient;
 if (typeof window === "undefined") {
   const fallbackUrl = "postgresql://postgres:postgres@localhost:5432/astroshubham";
   
-  if (process.env.NODE_ENV === "production") {
-    const pool = new Pool({ connectionString: connectionString || fallbackUrl });
+  if (!globalForPrisma.prisma) {
+    const pool = new Pool({
+      connectionString: connectionString || fallbackUrl,
+      max: 5,
+      connectionTimeoutMillis: 5000,
+    });
     const adapter = new PrismaPg(pool);
-    prismaInstance = new PrismaClient({ adapter });
-  } else {
-    if (!globalForPrisma.prisma) {
-      const pool = new Pool({ connectionString: connectionString || fallbackUrl });
-      const adapter = new PrismaPg(pool);
-      globalForPrisma.prisma = new PrismaClient({
-        adapter,
-        log: ["error", "warn"],
-      });
-    }
-    prismaInstance = globalForPrisma.prisma;
+    globalForPrisma.prisma = new PrismaClient({
+      adapter,
+      log: ["error", "warn"],
+    });
   }
+  prismaInstance = globalForPrisma.prisma;
 } else {
   prismaInstance = {} as PrismaClient;
 }
