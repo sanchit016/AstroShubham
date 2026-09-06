@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BookingWidget from "@/components/BookingWidget";
 import Testimonials from "@/components/Testimonials";
-import { Sparkles, Heart, Briefcase, Users, Activity, ChevronRight, HelpCircle, Star } from "lucide-react";
+import { Sparkles, Heart, Briefcase, Users, Activity, ChevronRight, HelpCircle, Star, Globe, Clock, ShieldCheck } from "lucide-react";
 import { fadeUp, fadeIn, scaleIn, staggerContainer, viewportOnce } from "@/lib/motion";
 import { getPackage, formatPrice, type CurrencyCode } from "@/lib/pricing";
 import { useCurrency } from "@/lib/useCurrency";
@@ -71,29 +71,45 @@ function getFaqItems(currency: CurrencyCode) {
 
   return [
     {
+      q: "How do online astrology sessions work for clients in the USA, Canada, and India?",
+      a: (
+        <>
+          All consultations are conducted 1-on-1 via private <strong>Google Meet video calls</strong>. When you select a date, the booking calendar automatically converts and displays available slots in your local timezone (e.g. <strong>US Pacific PST, US Eastern EST, Canada EST/PST, or India IST</strong>). Upon booking, a Google Calendar invite with a dedicated Google Meet link is instantly emailed to you.
+        </>
+      ),
+      plainText:
+        "All consultations are conducted 1-on-1 via private Google Meet video calls. The booking calendar automatically displays available slots in your local timezone (US Pacific PST, US Eastern EST, Canada EST/PST, or India IST), and a Google Meet link is sent to your email immediately upon booking.",
+    },
+    {
       q: "What is the difference between the plans?",
       a: (
         <>
-          The <strong>General Plan ({generalPrice})</strong> is for individual queries where you can ask Shubham any number of questions regarding career, health, or family. The <strong>Couple/Matching Plan ({marriagePrice})</strong> is a double-chart reading specifically optimized for marriage matching (Gun Milan) and relationship consultation involving two profiles.
+          The <strong>General Plan ({generalPrice})</strong> is a comprehensive 45-minute individual reading where you can ask Shubham any number of questions regarding career, wealth, health, or life path. The <strong>Couple/Matching Plan ({marriagePrice})</strong> is a 60-minute double-chart reading specifically optimized for marriage matching (Ashtakoot Gun Milan), Manglik analysis, and relationship harmony for two profiles.
         </>
       ),
-      plainText: `The General Plan (${generalPrice}) is for individual queries where you can ask any number of questions regarding career, health, or family. The Couple/Matching Plan (${marriagePrice}) is a double-chart reading specifically optimized for marriage matching (Gun Milan) and relationship consultation involving two profiles.`,
+      plainText: `The General Plan (${generalPrice}) is a comprehensive 45-minute individual reading where you can ask any number of questions regarding career, wealth, health, or life path. The Couple/Matching Plan (${marriagePrice}) is a 60-minute double-chart reading specifically optimized for marriage matching (Ashtakoot Gun Milan), Manglik analysis, and relationship harmony for two profiles.`,
     },
     {
-      q: "What details are required for the session?",
-      a: "You will need to provide your exact Birth Date, Birth Time, and Birth Place. For couple compatibility readings, providing birth parameters for both partners is recommended.",
-      plainText:
-        "You will need to provide your exact Birth Date, Birth Time, and Birth Place. For couple compatibility readings, providing birth parameters for both partners is recommended.",
-    },
-    {
-      q: "How do the live consultations take place?",
+      q: "Which payment options are supported for international (USD/CAD) and Indian (INR) clients?",
       a: (
         <>
-          Consultations are conducted online via <strong>Google Meet</strong>. A dynamic calendar invite and video link will be sent to your email address automatically upon scheduling.
+          Clients in the <strong>United States and Canada</strong> can pay securely in <strong>USD ($) or CAD (CA$)</strong> via <strong>PayPal</strong> (Credit/Debit Cards, PayPal Balance). Clients in <strong>India</strong> can pay in <strong>INR (₹)</strong> seamlessly via <strong>Razorpay</strong> (UPI, Google Pay, PhonePe, Paytm, Net Banking, and Cards).
         </>
       ),
       plainText:
-        "Consultations are conducted online via Google Meet. A dynamic calendar invite and video link will be sent to your email address automatically upon scheduling.",
+        "Clients in the USA and Canada can pay in USD or CAD via PayPal (Credit/Debit Cards, PayPal Balance). Clients in India can pay in INR seamlessly via Razorpay (UPI, Google Pay, PhonePe, Net Banking, and Cards).",
+    },
+    {
+      q: "What birth details are required for an accurate horoscope & Lal Kitab reading?",
+      a: "You will need to provide your exact Birth Date, Birth Time (as precise as possible), and Birth Place (City & Country). For couple compatibility readings, birth parameters for both partners are required.",
+      plainText:
+        "You will need to provide your exact Birth Date, Birth Time (as precise as possible), and Birth Place (City & Country). For couple compatibility readings, birth parameters for both partners are required.",
+    },
+    {
+      q: "Can I consult for family members or prospective marriage proposals abroad?",
+      a: "Yes. Many NRI clients in the USA and Canada consult Shubham for family members living in India or prospective marriage matches located in different time zones. You can discuss multiple charts within your scheduled consultation.",
+      plainText:
+        "Yes. Many NRI clients in the USA and Canada consult Shubham for family members living in India or prospective marriage matches located in different time zones. You can discuss multiple charts within your scheduled consultation.",
     },
     {
       q: "Can I change my scheduled slot later?",
@@ -136,13 +152,13 @@ export default function Home() {
             <div className="hero-content" style={{ gap: "1rem" }}>
               <motion.div className="hero-badge" variants={fadeUp} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem" }}>
                 <Sparkles size={12} />
-                <span>Vedic & Lal Kitab Astrology</span>
+                <span>Vedic & Lal Kitab Astrologer – USA, Canada & India</span>
               </motion.div>
               <motion.h1 variants={fadeUp} style={{ fontSize: "clamp(2.2rem, 4.5vw, 4rem)", lineHeight: 1.15 }}>
                 Clarity for <span className="gradient-text">Your Life&apos;s Journey</span>
               </motion.h1>
               <motion.p variants={fadeUp} style={{ fontSize: "1.1rem", maxWidth: "550px", color: "var(--text-secondary)" }}>
-                Get clear, practical, and honest guidance from Shubham Chhabra. Plot your stars and find answers to all your concerns regarding career, relationships, and health.
+                Get clear, practical, and honest Vedic guidance from Shubham Chhabra. 1-on-1 private video consultations on Google Meet for seekers across the United States, Canada, India, and worldwide.
               </motion.p>
 
               <motion.div variants={fadeUp} style={{ margin: "1rem 0", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -150,9 +166,9 @@ export default function Home() {
                   <Star size={16} fill="var(--gold-primary)" />
                   <span><strong>General Plan: {generalPrice} | Couple/Matching: {marriagePrice}</strong></span>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", fontSize: "0.95rem", color: "var(--stellar-cyan)" }}>
-                  <Sparkles size={16} />
-                  <span>Ask any number of questions. Direct Lal Kitab remedies.</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", fontSize: "0.92rem", color: "var(--stellar-cyan)" }}>
+                  <Globe size={15} />
+                  <span>Slots auto-converted to your timezone (IST, PST, EST, CST) • Unlimited questions</span>
                 </div>
               </motion.div>
 
