@@ -53,6 +53,7 @@ export function isSupportedCurrency(value: unknown): value is CurrencyCode {
 export interface CouponDefinition {
   code: string;
   prices: Record<CurrencyCode, number>;
+  packagePrices?: Record<string, Record<CurrencyCode, number>>;
   description: string;
 }
 
@@ -66,6 +67,42 @@ export const VALID_COUPONS: Record<string, CouponDefinition> = {
     code: "ASTRO_SECRET_8819P",
     prices: { INR: 1, USD: 0.5, CAD: 0.5 },
     description: "Owner Testing Pass (₹1 / $0.50)",
+  },
+  SHUBHAM1100: {
+    code: "SHUBHAM1100",
+    prices: { INR: 1100, USD: 15, CAD: 20 },
+    packagePrices: {
+      general: { INR: 1100, USD: 15, CAD: 20 },
+      marriage: { INR: 1999, USD: 25, CAD: 35 },
+    },
+    description: "Special Consultation Blessings (General: ₹1,100)",
+  },
+  ASTRO1100: {
+    code: "ASTRO1100",
+    prices: { INR: 1100, USD: 15, CAD: 20 },
+    packagePrices: {
+      general: { INR: 1100, USD: 15, CAD: 20 },
+      marriage: { INR: 1999, USD: 25, CAD: 35 },
+    },
+    description: "Special Consultation Offer (General: ₹1,100)",
+  },
+  SPECIAL1100: {
+    code: "SPECIAL1100",
+    prices: { INR: 1100, USD: 15, CAD: 20 },
+    packagePrices: {
+      general: { INR: 1100, USD: 15, CAD: 20 },
+      marriage: { INR: 1999, USD: 25, CAD: 35 },
+    },
+    description: "Special Consultation Discount (General: ₹1,100)",
+  },
+  VEDIC1100: {
+    code: "VEDIC1100",
+    prices: { INR: 1100, USD: 15, CAD: 20 },
+    packagePrices: {
+      general: { INR: 1100, USD: 15, CAD: 20 },
+      marriage: { INR: 1999, USD: 25, CAD: 35 },
+    },
+    description: "Vedic Wisdom Special (General: ₹1,100)",
   },
 };
 
@@ -83,6 +120,9 @@ export function getDiscountedPrice(pkg: PackageDefinition, currency: CurrencyCod
   if (couponCode) {
     const coupon = validateCoupon(couponCode);
     if (coupon) {
+      if (coupon.packagePrices && coupon.packagePrices[pkg.id]) {
+        return coupon.packagePrices[pkg.id][currency];
+      }
       return coupon.prices[currency];
     }
   }
