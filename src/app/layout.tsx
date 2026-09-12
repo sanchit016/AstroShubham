@@ -132,6 +132,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    google: "eQxdo46AWlr_IvT9Ms77UgGmGJDWzQ6l4Boy8RK7yNo",
+  },
   category: "Astrology & Spiritual Guidance",
 };
 
@@ -254,6 +257,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <meta name="google-site-verification" content="eQxdo46AWlr_IvT9Ms77UgGmGJDWzQ6l4Boy8RK7yNo" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="alternate icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-icon.svg" />
