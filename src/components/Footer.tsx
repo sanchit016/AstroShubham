@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 export default function Footer() {
@@ -17,8 +18,27 @@ export default function Footer() {
           variants={staggerContainer(0.1)}
         >
           <motion.div className="footer-brand" variants={fadeUp}>
-            <Link href="/" className="logo" style={{ display: "inline-flex" }}>
-              <Sparkles size={20} style={{ color: "var(--gold-primary)" }} />
+            <Link href="/" className="logo" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  boxShadow: "0 0 10px rgba(234, 179, 8, 0.3)",
+                  overflow: "hidden",
+                  flexShrink: 0,
+                }}
+              >
+                <Image
+                  src="/favicon.svg"
+                  alt="AstroShubham Logo"
+                  width={24}
+                  height={24}
+                />
+              </span>
               <span>AstroShubham</span>
             </Link>
             <p className="footer-description">

@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useCurrency, setGlobalCurrency } from "@/lib/useCurrency";
 import type { CurrencyCode } from "@/lib/pricing";
 
@@ -40,13 +41,27 @@ export default function Header() {
     <header className={`header ${isScrolled ? "is-scrolled" : ""}`}>
       <div className="container nav-container">
         <Link href="/" className="logo">
-          <motion.span
-            style={{ display: "inline-flex", color: "var(--gold-primary)" }}
-            animate={{ rotate: [0, 15, -10, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              boxShadow: "0 0 12px rgba(234, 179, 8, 0.4)",
+              overflow: "hidden",
+              flexShrink: 0,
+            }}
           >
-            <Sparkles size={24} />
-          </motion.span>
+            <Image
+              src="/favicon.svg"
+              alt="AstroShubham Logo"
+              width={28}
+              height={28}
+              priority
+            />
+          </span>
           <span>AstroShubham</span>
         </Link>
 
