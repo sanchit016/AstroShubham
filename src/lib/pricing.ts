@@ -29,7 +29,7 @@ export const PACKAGES: PackageDefinition[] = [
       "Connect for a private consultation to discuss all your life aspects (Career, Health, Family, etc.). Ask any number of questions.",
     duration: "45 Minutes",
     durationMinutes: 45,
-    prices: { USD: 25, INR: 1999, CAD: 30 },
+    prices: { USD: 25, INR: 1100, CAD: 30 },
   },
   {
     id: "marriage",
