@@ -31,10 +31,23 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    if (isOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+
+      return () => {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
+        window.scrollTo(0, scrollY);
+      };
+    }
   }, [isOpen]);
 
   return (
@@ -141,45 +154,101 @@ export default function Header() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed",
               top: "72px",
               left: 0,
+              right: 0,
+              bottom: 0,
               width: "100%",
-              height: "calc(100vh - 72px)",
-              backgroundColor: "rgba(255, 253, 245, 0.97)",
-              backdropFilter: "blur(20px)",
-              zIndex: 99,
+              height: "calc(100dvh - 72px)",
+              backgroundColor: "#fffdf5",
+              zIndex: 9999,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: "2.5rem",
-              borderTop: "1px solid rgba(180, 150, 50, 0.15)",
+              gap: "2rem",
+              borderTop: "1px solid var(--border-color)",
+              overscrollBehavior: "contain",
+              touchAction: "pan-y",
+              padding: "2rem 1.5rem",
             }}
           >
             {NAV_ITEMS.map((item, i) => (
               <motion.div
                 key={item.href}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 * i, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ delay: 0.03 * i, duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               >
-                <Link href={item.href} className="nav-link" style={{ fontSize: "1.5rem" }} onClick={toggleMenu}>
+                <Link
+                  href={item.href}
+                  className="nav-link"
+                  style={{ fontSize: "1.35rem", fontWeight: 500, color: "var(--text-primary)" }}
+                  onClick={toggleMenu}
+                >
                   {item.label}
                 </Link>
               </motion.div>
             ))}
+
+            {/* Mobile Currency Switcher */}
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * NAV_ITEMS.length, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: 0.03 * (NAV_ITEMS.length + 1), duration: 0.25 }}
+              style={{
+                display: "inline-flex",
+                background: "rgba(0, 0, 0, 0.04)",
+                padding: "4px",
+                borderRadius: "8px",
+                border: "1px solid var(--border-color)",
+                gap: "4px",
+                marginTop: "0.5rem",
+              }}
             >
-              <Link href="/#book" className="btn btn-primary" style={{ fontSize: "1.2rem" }} onClick={toggleMenu}>
+              {(["INR", "USD", "CAD"] as CurrencyCode[]).map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => {
+                    setGlobalCurrency(c);
+                  }}
+                  style={{
+                    padding: "6px 14px",
+                    fontSize: "0.85rem",
+                    fontWeight: "600",
+                    borderRadius: "6px",
+                    border: "none",
+                    cursor: "pointer",
+                    background: currency === c ? "var(--gold-primary)" : "transparent",
+                    color: currency === c ? "#fff" : "var(--text-secondary)",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {c === "INR" ? "₹ INR" : c === "USD" ? "$ USD" : "CA$ CAD"}
+                </button>
+              ))}
+            </motion.div>
+
+            {/* Book Now Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.03 * (NAV_ITEMS.length + 2), duration: 0.25 }}
+              style={{ width: "100%", maxWidth: "260px" }}
+            >
+              <Link
+                href="/#book"
+                className="btn btn-primary"
+                style={{ width: "100%", justifyContent: "center", fontSize: "1.1rem", padding: "0.75rem 1.5rem" }}
+                onClick={toggleMenu}
+              >
                 Book Now
               </Link>
             </motion.div>
