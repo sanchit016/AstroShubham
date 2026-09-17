@@ -236,9 +236,8 @@ export default function ReviewsPage() {
           ) : (
             <motion.div
               initial="hidden"
-              whileInView="show"
-              viewport={viewportOnce}
-              variants={staggerContainer(0.08)}
+              animate="show"
+              variants={staggerContainer(0.04)}
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
