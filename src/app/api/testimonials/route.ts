@@ -1,28 +1,22 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { mockDb } from "@/lib/mockDb";
-import { INITIAL_TESTIMONIALS } from "@/lib/testimonialsData";
+import { ensureTestimonialsSeeded } from "@/lib/seedTestimonials";
 
 export async function GET() {
   try {
     try {
+      // Automatically ensure initial records exist in database
+      await ensureTestimonialsSeeded();
+
       const dbTestimonials = await db.testimonial.findMany({
         where: { approved: true },
         orderBy: { createdAt: "desc" },
       });
 
-      const dbIds = new Set(dbTestimonials.map((t) => t.id));
-      const dbQuotes = new Set(dbTestimonials.map((t) => t.quote.trim()));
-
-      const fallbackList = INITIAL_TESTIMONIALS.filter(
-        (it) => !dbIds.has(it.id) && !dbQuotes.has(it.quote.trim())
-      );
-
-      const combined = [...dbTestimonials, ...fallbackList];
-
-      return NextResponse.json({ success: true, testimonials: combined, source: "database_merged" });
+      return NextResponse.json({ success: true, testimonials: dbTestimonials, source: "database" });
     } catch (dbErr: any) {
-      console.warn("Database connection issue. Returning mockDb list:", dbErr?.message || dbErr);
+      console.warn("Database connection issue. Returning fallback list:", dbErr?.message || dbErr);
       const testimonials = mockDb.getTestimonials();
       return NextResponse.json({
         success: true,
