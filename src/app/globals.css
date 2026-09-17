@@ -684,13 +684,18 @@ strong {
 @media (max-width: 600px) {
   .guidance-item {
     grid-template-columns: 1fr;
-    gap: 1rem;
-    text-align: center;
-    justify-items: center;
+    gap: 1.25rem;
+    text-align: left;
+    justify-items: start;
+  }
+  .guidance-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
   }
   .guidance-details {
     grid-template-columns: 1fr;
-    gap: 0.4rem;
+    gap: 0.6rem;
   }
 }
 

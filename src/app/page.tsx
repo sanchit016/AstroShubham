@@ -283,9 +283,9 @@ export default function Home() {
                         </p>
                         <div className="guidance-details">
                           {category.questions.map((question) => (
-                            <div key={question} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                              <ChevronRight size={14} style={{ color: "var(--stellar-cyan)" }} />
-                              <span>{question}</span>
+                            <div key={question} style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", textAlign: "left" }}>
+                              <ChevronRight size={14} style={{ color: "var(--stellar-cyan)", flexShrink: 0, marginTop: "4px" }} />
+                              <span style={{ fontSize: "0.92rem", lineHeight: 1.45 }}>{question}</span>
                             </div>
                           ))}
                         </div>
