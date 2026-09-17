@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -23,6 +24,7 @@ const GUIDANCE_CATEGORIES = [
       "Remedies for delayed marriage?",
     ],
     cta: { action: "Book Couple Session", pkg: "marriage" },
+    guideLink: { href: "/services/kundli-matching", label: "Explore Gun Milan Guide" },
   },
   {
     icon: Briefcase,
@@ -36,6 +38,7 @@ const GUIDANCE_CATEGORIES = [
       "Remedies for career obstacles?",
     ],
     cta: { action: "Book Session", pkg: "general" },
+    guideLink: { href: "/services/career-astrology", label: "Explore Career Guide" },
   },
   {
     icon: Users,
@@ -49,6 +52,7 @@ const GUIDANCE_CATEGORIES = [
       "Remedies for peace at home?",
     ],
     cta: { action: "Book Session", pkg: "general" },
+    guideLink: { href: "/services/lal-kitab-remedies", label: "Explore Lal Kitab Remedies" },
   },
   {
     icon: Activity,
@@ -62,6 +66,7 @@ const GUIDANCE_CATEGORIES = [
       "Timing of health recovery?",
     ],
     cta: { action: "Book Session", pkg: "general" },
+    guideLink: { href: "/services/lal-kitab-remedies", label: "Explore Planetary Remedies" },
   },
 ];
 
@@ -284,15 +289,34 @@ export default function Home() {
                             </div>
                           ))}
                         </div>
-                        <motion.button
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                          onClick={() => handleBookClick(category.cta.pkg)}
-                          className="btn btn-secondary"
-                          style={{ padding: "0.5rem 1.2rem", fontSize: "0.85rem", cursor: "pointer" }}
-                        >
-                          {category.cta.action} ({formatPrice(getPackage(category.cta.pkg), currency)})
-                        </motion.button>
+                        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1rem", marginTop: "1rem" }}>
+                          <motion.button
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => handleBookClick(category.cta.pkg)}
+                            className="btn btn-secondary"
+                            style={{ padding: "0.5rem 1.2rem", fontSize: "0.85rem", cursor: "pointer" }}
+                          >
+                            {category.cta.action} ({formatPrice(getPackage(category.cta.pkg), currency)})
+                          </motion.button>
+                          {category.guideLink && (
+                            <Link
+                              href={category.guideLink.href}
+                              style={{
+                                color: "var(--gold-primary)",
+                                fontSize: "0.88rem",
+                                fontWeight: 500,
+                                textDecoration: "none",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.25rem",
+                              }}
+                            >
+                              <span>{category.guideLink.label}</span>
+                              <ChevronRight size={14} />
+                            </Link>
+                          )}
+                        </div>
                       </div>
                     </motion.div>
                     {idx < GUIDANCE_CATEGORIES.length - 1 && (

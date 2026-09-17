@@ -50,18 +50,18 @@ export default function Footer() {
             <h4 className="footer-col-title">Consultations</h4>
             <ul className="footer-links">
               <li>
-                <Link href="#services" className="footer-link">
-                  Career Blueprint
+                <Link href="/services/career-astrology" className="footer-link">
+                  Career & Wealth Astrology
                 </Link>
               </li>
               <li>
-                <Link href="#services" className="footer-link">
-                  Relationship Kundli Match
+                <Link href="/services/kundli-matching" className="footer-link">
+                  Kundli Matching & Gun Milan
                 </Link>
               </li>
               <li>
-                <Link href="#services" className="footer-link">
-                  Detailed Life Reading
+                <Link href="/services/lal-kitab-remedies" className="footer-link">
+                  Lal Kitab Practical Remedies
                 </Link>
               </li>
             </ul>
