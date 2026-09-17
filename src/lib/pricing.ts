@@ -38,7 +38,7 @@ export const PACKAGES: PackageDefinition[] = [
       "Detailed Vedic & Lal Kitab compatibility reading for couples. Includes Gun Milan, planetary charts comparison, and Venus/7th house adjustments.",
     duration: "60 Minutes",
     durationMinutes: 60,
-    prices: { USD: 40, INR: 2999, CAD: 50 },
+    prices: { USD: 40, INR: 2100, CAD: 50 },
   },
 ];
 
@@ -73,36 +73,36 @@ export const VALID_COUPONS: Record<string, CouponDefinition> = {
     prices: { INR: 1100, USD: 15, CAD: 20 },
     packagePrices: {
       general: { INR: 1100, USD: 15, CAD: 20 },
-      marriage: { INR: 1999, USD: 25, CAD: 35 },
+      marriage: { INR: 1500, USD: 25, CAD: 35 },
     },
-    description: "Special Consultation Blessings (General: ₹1,100)",
+    description: "Special Consultation Blessings (General: ₹1,100 / Couple: ₹1,500)",
   },
   ASTRO1100: {
     code: "ASTRO1100",
     prices: { INR: 1100, USD: 15, CAD: 20 },
     packagePrices: {
       general: { INR: 1100, USD: 15, CAD: 20 },
-      marriage: { INR: 1999, USD: 25, CAD: 35 },
+      marriage: { INR: 1500, USD: 25, CAD: 35 },
     },
-    description: "Special Consultation Offer (General: ₹1,100)",
+    description: "Special Consultation Offer (General: ₹1,100 / Couple: ₹1,500)",
   },
   SPECIAL1100: {
     code: "SPECIAL1100",
     prices: { INR: 1100, USD: 15, CAD: 20 },
     packagePrices: {
       general: { INR: 1100, USD: 15, CAD: 20 },
-      marriage: { INR: 1999, USD: 25, CAD: 35 },
+      marriage: { INR: 1500, USD: 25, CAD: 35 },
     },
-    description: "Special Consultation Discount (General: ₹1,100)",
+    description: "Special Consultation Discount (General: ₹1,100 / Couple: ₹1,500)",
   },
   VEDIC1100: {
     code: "VEDIC1100",
     prices: { INR: 1100, USD: 15, CAD: 20 },
     packagePrices: {
       general: { INR: 1100, USD: 15, CAD: 20 },
-      marriage: { INR: 1999, USD: 25, CAD: 35 },
+      marriage: { INR: 1500, USD: 25, CAD: 35 },
     },
-    description: "Vedic Wisdom Special (General: ₹1,100)",
+    description: "Vedic Wisdom Special (General: ₹1,100 / Couple: ₹1,500)",
   },
 };
 

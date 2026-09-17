@@ -189,7 +189,7 @@ const jsonLd = {
       image: `${siteUrl}/og-image.png`,
       description:
         "Online Vedic & Lal Kitab astrology consultations by Shubham Chhabra. Direct 1-on-1 sessions on Google Meet covering career direction, marriage compatibility, health, and life clarity for clients in the USA, Canada, India, and across the globe.",
-      priceRange: "₹1,100 - ₹2,999 / $25 - $40 USD / $35 - $55 CAD",
+      priceRange: "₹1,100 - ₹2,100 / $25 - $40 USD / $35 - $50 CAD",
       email: "astroshubhamchhabra@gmail.com",
       address: {
         "@type": "PostalAddress",
