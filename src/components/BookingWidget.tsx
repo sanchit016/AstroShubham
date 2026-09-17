@@ -521,7 +521,7 @@ export default function BookingWidget() {
   };
 
   return (
-    <div className="glass-card" style={{ maxWidth: "700px", margin: "0 auto", padding: "2.5rem 2rem" }}>
+    <div className="booking-widget-card">
       {/* Step Indicator */}
       {step <= 4 && (
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2.5rem", position: "relative" }}>
@@ -649,41 +649,54 @@ export default function BookingWidget() {
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {PACKAGES.map((pkg) => (
-              <motion.div
-                key={pkg.id}
-                onClick={() => selectPackageById(pkg.id)}
-                whileHover={{ scale: 1.015 }}
-                whileTap={{ scale: 0.99 }}
-                style={{
-                  padding: "1.2rem 1.5rem",
-                  borderRadius: "var(--border-radius)",
-                  border: `1.5px solid ${selectedPackage.id === pkg.id ? "var(--text-primary)" : "var(--border-color)"}`,
-                  background: selectedPackage.id === pkg.id ? "rgba(255, 255, 255, 0.02)" : "transparent",
-                  cursor: "pointer",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "1.5rem",
-                  transition: "all 0.3s ease",
-                }}
-              >
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-                  <h4 style={{ fontSize: "1rem", color: "var(--text-primary)" }}>
-                    {pkg.title}
-                  </h4>
-                  <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", maxWidth: "450px" }}>
+            {PACKAGES.map((pkg) => {
+              const isSelected = selectedPackage.id === pkg.id;
+              return (
+                <motion.div
+                  key={pkg.id}
+                  onClick={() => selectPackageById(pkg.id)}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className={`plan-card ${isSelected ? "selected" : ""}`}
+                >
+                  {/* Top Header: Radio + Title + Badges on Left, Price on Right */}
+                  <div className="plan-card-header">
+                    <div className="plan-card-title-group">
+                      <div className="plan-card-radio">
+                        {isSelected && <div className="plan-card-radio-inner" />}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div className="plan-card-title">
+                          {pkg.title}
+                        </div>
+                        <div className="plan-card-badges">
+                          <span className="plan-badge plan-badge-gold">
+                            ⏱️ {pkg.duration}
+                          </span>
+                          <span className="plan-badge plan-badge-neutral">
+                            🎥 Google Meet 1-on-1
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="plan-card-price-group">
+                      <div className="plan-card-price">
+                        {formatPrice(pkg, currency)}
+                      </div>
+                      <div className="plan-card-price-sub">
+                        per session
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Full-width Description */}
+                  <p className="plan-card-desc">
                     {pkg.description}
                   </p>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Duration: {pkg.duration}</span>
-                </div>
-                <div>
-                  <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "var(--text-primary)" }}>
-                    {formatPrice(pkg, currency)}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
       )}
