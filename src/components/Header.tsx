@@ -10,10 +10,10 @@ import type { CurrencyCode } from "@/lib/pricing";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
-  { href: "#services", label: "Consultations" },
-  { href: "#about", label: "About" },
-  { href: "#testimonials", label: "Reviews" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/#services", label: "Consultations" },
+  { href: "/#about", label: "About" },
+  { href: "/reviews", label: "Reviews" },
+  { href: "/#faq", label: "FAQ" },
 ];
 
 export default function Header() {
@@ -100,7 +100,7 @@ export default function Header() {
               </div>
             </li>
             <li>
-              <Link href="#book" className="btn btn-secondary" style={{ padding: "0.5rem 1.2rem", fontSize: "0.9rem" }}>
+              <Link href="/#book" className="btn btn-secondary" style={{ padding: "0.5rem 1.2rem", fontSize: "0.9rem" }}>
                 Book Now
               </Link>
             </li>
@@ -179,7 +179,7 @@ export default function Header() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 * NAV_ITEMS.length, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
-              <Link href="#book" className="btn btn-primary" style={{ fontSize: "1.2rem" }} onClick={toggleMenu}>
+              <Link href="/#book" className="btn btn-primary" style={{ fontSize: "1.2rem" }} onClick={toggleMenu}>
                 Book Now
               </Link>
             </motion.div>
