@@ -205,7 +205,7 @@ export default function Home() {
               animate={{ y: [0, -14, 0] }}
               transition={{ y: { duration: 6, repeat: Infinity, ease: "easeInOut" } }}
             >
-              <svg width="340" height="340" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.85 }}>
+              <svg width="340" height="340" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ maxWidth: "100%", height: "auto", opacity: 0.85 }}>
                 {/* Concentric Orbits */}
                 <g className="orbit-spin">
                   <circle cx="50" cy="50" r="45" stroke="rgba(180, 150, 50, 0.12)" strokeWidth="0.5" />

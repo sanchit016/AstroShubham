@@ -35,15 +35,32 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-html, body {
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
   background-color: var(--bg-dark);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-weight: 300;
   min-height: 100vh;
   overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
   line-height: 1.6;
   scroll-behavior: smooth;
+  position: relative;
+}
+
+main {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -78,8 +95,8 @@ html, body {
   position: fixed;
   top: -10%;
   left: 30%;
-  width: 50vw;
-  height: 50vw;
+  width: min(50vw, 500px);
+  height: min(50vw, 500px);
   border-radius: 50%;
   background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 70%);
   z-index: -1;
@@ -99,18 +116,18 @@ html, body {
 
 .nebula-glow-1 {
   top: 5%;
-  right: -5%;
-  width: 32vw;
-  height: 32vw;
+  right: 0;
+  width: min(32vw, 320px);
+  height: min(32vw, 320px);
   background: radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, transparent 72%);
   animation: driftGlow 20s ease-in-out infinite alternate;
 }
 
 .nebula-glow-2 {
   bottom: -10%;
-  left: -8%;
-  width: 28vw;
-  height: 28vw;
+  left: 0;
+  width: min(28vw, 280px);
+  height: min(28vw, 280px);
   background: radial-gradient(circle, rgba(217, 119, 6, 0.12) 0%, transparent 72%);
   animation: driftGlow 24s ease-in-out infinite alternate-reverse;
 }
@@ -142,7 +159,14 @@ html, body {
   margin: 0 auto;
   padding: 0 1.5rem;
   width: 100%;
+  box-sizing: border-box;
   position: relative;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 0 1rem;
+  }
 }
 
 .section {
@@ -150,6 +174,9 @@ html, body {
   border-bottom: 1px solid var(--border-color);
   position: relative;
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Typography */
@@ -293,6 +320,9 @@ p {
   display: flex;
   align-items: center;
   padding-top: 64px;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
 }
 
 .hero-grid {
@@ -300,6 +330,7 @@ p {
   grid-template-columns: 1.2fr 0.8fr;
   gap: 4rem;
   align-items: center;
+  width: 100%;
 }
 
 .hero-content {
@@ -307,6 +338,7 @@ p {
   flex-direction: column;
   gap: 1.2rem;
   align-items: flex-start;
+  max-width: 100%;
 }
 
 .hero-badge {
@@ -333,12 +365,20 @@ p {
 .hero-cta-group {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .hero-visual {
   display: flex;
   justify-content: center;
   align-items: center;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.hero-visual svg {
+  max-width: 100%;
+  height: auto;
 }
 
 @keyframes spinSlow {
@@ -505,13 +545,18 @@ select.form-input {
   background: #f8f3e3;
   border-top: 1px solid var(--border-color);
   padding: 4rem 0 2rem 0;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr 1fr;
-  gap: 3.5rem;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 2.5rem;
   margin-bottom: 3rem;
+  width: 100%;
 }
 
 .footer-brand {
