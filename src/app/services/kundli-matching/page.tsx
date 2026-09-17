@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Heart, Star, CheckCircle2, ShieldCheck, Clock, Globe, ArrowRight, HelpCircle, Sparkles, Users } from "lucide-react";
+import { Heart, Star, CheckCircle2, ShieldCheck, Clock, Globe, ArrowRight, HelpCircle, Sparkles } from "lucide-react";
 
 const siteUrl = "https://astroshubhamchhabra.com";
 const pageUrl = `${siteUrl}/services/kundli-matching`;
@@ -149,45 +149,34 @@ export default function KundliMatchingPage() {
         {/* HERO SECTION */}
         <section className="container" style={{ marginBottom: "4rem" }}>
           <div style={{ maxWidth: "860px", margin: "0 auto", textAlign: "center" }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "0.4rem 1rem",
-                borderRadius: "999px",
-                background: "rgba(234, 179, 8, 0.12)",
-                border: "1px solid rgba(234, 179, 8, 0.3)",
-                color: "var(--gold-primary)",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                marginBottom: "1.25rem",
-              }}
-            >
-              <Heart size={16} />
+            <div className="hero-badge" style={{ marginBottom: "1.25rem" }}>
+              <Heart size={14} />
               <span>Vedic & Lal Kitab Marriage Compatibility</span>
             </div>
 
             <h1
               style={{
-                fontFamily: "var(--font-outfit)",
+                fontFamily: "var(--font-heading)",
                 fontSize: "clamp(2.2rem, 5vw, 3.4rem)",
-                fontWeight: 700,
-                lineHeight: 1.15,
+                fontWeight: 600,
+                lineHeight: 1.18,
                 marginBottom: "1.25rem",
                 letterSpacing: "-0.02em",
+                color: "var(--text-primary)",
               }}
             >
               Online Kundli Matching & <br />
-              <span className="gold-text-gradient">Gun Milan Consultation</span>
+              <span className="gradient-text">Gun Milan Consultation</span>
             </h1>
 
             <p
               style={{
-                fontSize: "clamp(1.05rem, 2vw, 1.25rem)",
+                fontSize: "clamp(1.05rem, 2vw, 1.2rem)",
                 color: "var(--text-secondary)",
-                lineHeight: 1.6,
+                lineHeight: 1.7,
                 marginBottom: "2rem",
+                maxWidth: "760px",
+                margin: "0 auto 2rem auto",
               }}
             >
               Beyond automated computer scores. Connect 1-on-1 with <strong>Shubham Chhabra</strong> on Google Meet for deep double-chart analysis, 36 Ashtakoot points, Manglik Dosha evaluation, and practical remedies for lasting marital harmony.
@@ -196,16 +185,11 @@ export default function KundliMatchingPage() {
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1rem", marginBottom: "2.5rem" }}>
               <Link
                 href="/#book"
-                className="btn-primary"
+                className="btn btn-primary"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "0.9rem 2rem",
-                  fontSize: "1.05rem",
+                  padding: "0.85rem 2.2rem",
+                  fontSize: "1rem",
                   fontWeight: 600,
-                  textDecoration: "none",
-                  borderRadius: "12px",
                 }}
               >
                 <span>Book Couple Match Session</span>
@@ -213,16 +197,11 @@ export default function KundliMatchingPage() {
               </Link>
               <Link
                 href="/reviews"
-                className="btn-secondary"
+                className="btn btn-secondary"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "0.9rem 1.8rem",
-                  fontSize: "1.05rem",
+                  padding: "0.85rem 2rem",
+                  fontSize: "1rem",
                   fontWeight: 500,
-                  textDecoration: "none",
-                  borderRadius: "12px",
                 }}
               >
                 <span>Read Client Reviews</span>
@@ -231,27 +210,25 @@ export default function KundliMatchingPage() {
 
             {/* Trust Badges */}
             <div
+              className="glass-card"
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "1rem",
-                padding: "1.5rem",
-                borderRadius: "16px",
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid var(--border-color)",
+                gap: "1.5rem",
+                padding: "1.5rem 2rem",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", justifyContent: "center" }}>
                 <Clock size={20} style={{ color: "var(--gold-primary)" }} />
-                <span style={{ fontSize: "0.9rem" }}>60-Min Private Video Call</span>
+                <span style={{ fontSize: "0.95rem", fontWeight: 500, color: "var(--text-primary)" }}>60-Min Private Video Call</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", justifyContent: "center" }}>
                 <Globe size={20} style={{ color: "var(--gold-primary)" }} />
-                <span style={{ fontSize: "0.9rem" }}>USA, Canada & India Timezones</span>
+                <span style={{ fontSize: "0.95rem", fontWeight: 500, color: "var(--text-primary)" }}>USA, Canada & India Timezones</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", justifyContent: "center" }}>
                 <ShieldCheck size={20} style={{ color: "var(--gold-primary)" }} />
-                <span style={{ fontSize: "0.9rem" }}>100% Confidential Charts</span>
+                <span style={{ fontSize: "0.95rem", fontWeight: 500, color: "var(--text-primary)" }}>100% Confidential Charts</span>
               </div>
             </div>
           </div>
@@ -259,12 +236,13 @@ export default function KundliMatchingPage() {
 
         {/* 36 GUNA MILAN DEEP DIVE */}
         <section className="container" style={{ marginBottom: "5rem" }}>
-          <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+          <div style={{ maxWidth: "960px", margin: "0 auto" }}>
             <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-              <h2 style={{ fontFamily: "var(--font-outfit)", fontSize: "2.1rem", fontWeight: 700, marginBottom: "0.75rem" }}>
-                The 8 Pillars of <span className="gold-text-gradient">Ashtakoot Milan (36 Gunas)</span>
+              <div className="section-eyebrow">Compatibility Breakdown</div>
+              <h2 style={{ fontSize: "2.1rem", fontWeight: 600, marginBottom: "0.75rem" }}>
+                The 8 Pillars of <span className="gradient-text">Ashtakoot Milan (36 Gunas)</span>
               </h2>
-              <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", maxWidth: "650px", margin: "0 auto" }}>
                 How Vedic astrology evaluates the 8 distinct dimensions of compatibility between prospective life partners.
               </p>
             </div>
@@ -273,12 +251,9 @@ export default function KundliMatchingPage() {
               {GUN_MILAN_FACTORS.map((factor, idx) => (
                 <div
                   key={idx}
+                  className="glass-card hover-lift"
                   style={{
                     padding: "1.5rem",
-                    borderRadius: "14px",
-                    background: "rgba(255, 255, 255, 0.02)",
-                    border: "1px solid var(--border-color)",
-                    transition: "transform 0.2s ease, border-color 0.2s ease",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
@@ -287,7 +262,7 @@ export default function KundliMatchingPage() {
                       {factor.name}
                     </h3>
                   </div>
-                  <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: 1.5 }}>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: 1.6 }}>
                     {factor.desc}
                   </p>
                 </div>
@@ -299,37 +274,37 @@ export default function KundliMatchingPage() {
         {/* WHY COMPUTER MATCHING IS INCOMPLETE */}
         <section className="container" style={{ marginBottom: "5rem" }}>
           <div
+            className="glass-card"
             style={{
-              maxWidth: "900px",
+              maxWidth: "960px",
               margin: "0 auto",
-              padding: "2.5rem",
-              borderRadius: "20px",
-              background: "linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(20, 15, 5, 0.8) 100%)",
-              border: "1px solid rgba(234, 179, 8, 0.3)",
+              padding: "2.5rem 3rem",
+              background: "linear-gradient(135deg, #ffffff 0%, #fffbf0 100%)",
+              border: "1px solid rgba(217, 119, 6, 0.25)",
             }}
           >
-            <h2 style={{ fontFamily: "var(--font-outfit)", fontSize: "1.85rem", fontWeight: 700, marginBottom: "1rem" }}>
+            <h2 style={{ fontSize: "1.85rem", fontWeight: 600, marginBottom: "1rem", textAlign: "left" }}>
               Why Online Automated Scores Are Often Misleading
             </h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: "1.02rem", lineHeight: 1.7, marginBottom: "1.75rem" }}>
               Free automated websites only calculate basic Moon signs and often declare <em>Nadi Dosha</em> or <em>Manglik Dosha</em> without analyzing critical Vedic cancellation rules (Nadi Parikaran), 7th house lord planetary strength, Navamsha (D9) longevity, and Venus alignments.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.25rem" }}>
               <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
                 <CheckCircle2 size={20} style={{ color: "var(--gold-primary)", flexShrink: 0, marginTop: "2px" }} />
-                <span style={{ fontSize: "0.95rem", color: "var(--text-primary)" }}>
+                <span style={{ fontSize: "0.95rem", color: "var(--text-primary)", lineHeight: 1.5 }}>
                   <strong>Real Cancellations:</strong> Over 70% of Manglik & Nadi doshas have natural Vedic nullifications.
                 </span>
               </div>
               <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
                 <CheckCircle2 size={20} style={{ color: "var(--gold-primary)", flexShrink: 0, marginTop: "2px" }} />
-                <span style={{ fontSize: "0.95rem", color: "var(--text-primary)" }}>
+                <span style={{ fontSize: "0.95rem", color: "var(--text-primary)", lineHeight: 1.5 }}>
                   <strong>Navamsha D9 Verification:</strong> Examining marital fruitfulness and future emotional bond.
                 </span>
               </div>
               <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
                 <CheckCircle2 size={20} style={{ color: "var(--gold-primary)", flexShrink: 0, marginTop: "2px" }} />
-                <span style={{ fontSize: "0.95rem", color: "var(--text-primary)" }}>
+                <span style={{ fontSize: "0.95rem", color: "var(--text-primary)", lineHeight: 1.5 }}>
                   <strong>Practical Lal Kitab Remedies:</strong> Simple home & lifestyle adjustments instead of costly gems.
                 </span>
               </div>
@@ -339,10 +314,13 @@ export default function KundliMatchingPage() {
 
         {/* QUESTIONS ANSWERED IN THIS SESSION */}
         <section className="container" style={{ marginBottom: "5rem" }}>
-          <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-            <h2 style={{ fontFamily: "var(--font-outfit)", fontSize: "2rem", fontWeight: 700, textAlign: "center", marginBottom: "2.5rem" }}>
-              Key Questions Answered During Your <span className="gold-text-gradient">60-Min Consultation</span>
-            </h2>
+          <div style={{ maxWidth: "960px", margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+              <div className="section-eyebrow">Session Scope</div>
+              <h2 style={{ fontSize: "2rem", fontWeight: 600, marginBottom: "0.75rem" }}>
+                Key Questions Answered During Your <span className="gradient-text">60-Min Consultation</span>
+              </h2>
+            </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: "1.25rem" }}>
               {[
                 "Are our core astrological placements supportive for long-term marriage?",
@@ -354,18 +332,16 @@ export default function KundliMatchingPage() {
               ].map((q, idx) => (
                 <div
                   key={idx}
+                  className="glass-card hover-lift"
                   style={{
                     padding: "1.25rem 1.5rem",
-                    borderRadius: "12px",
-                    background: "rgba(255, 255, 255, 0.02)",
-                    border: "1px solid var(--border-color)",
                     display: "flex",
                     alignItems: "center",
                     gap: "1rem",
                   }}
                 >
                   <HelpCircle size={22} style={{ color: "var(--gold-primary)", flexShrink: 0 }} />
-                  <span style={{ fontSize: "0.98rem", color: "var(--text-primary)", lineHeight: 1.4 }}>{q}</span>
+                  <span style={{ fontSize: "0.98rem", color: "var(--text-primary)", lineHeight: 1.5, fontWeight: 400 }}>{q}</span>
                 </div>
               ))}
             </div>
@@ -374,25 +350,26 @@ export default function KundliMatchingPage() {
 
         {/* FAQ SECTION */}
         <section className="container" style={{ marginBottom: "5rem" }}>
-          <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-            <h2 style={{ fontFamily: "var(--font-outfit)", fontSize: "2rem", fontWeight: 700, textAlign: "center", marginBottom: "2.5rem" }}>
-              Frequently Asked Questions
-            </h2>
+          <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+              <div className="section-eyebrow">Got Questions?</div>
+              <h2 style={{ fontSize: "2rem", fontWeight: 600 }}>
+                Frequently Asked Questions
+              </h2>
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               {FAQS.map((item, idx) => (
                 <div
                   key={idx}
+                  className="glass-card"
                   style={{
-                    padding: "1.5rem 1.75rem",
-                    borderRadius: "14px",
-                    background: "rgba(255, 255, 255, 0.02)",
-                    border: "1px solid var(--border-color)",
+                    padding: "1.75rem 2rem",
                   }}
                 >
                   <h3 style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--gold-primary)", marginBottom: "0.6rem" }}>
                     {item.q}
                   </h3>
-                  <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6 }}>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.7 }}>
                     {item.a}
                   </p>
                 </div>
@@ -401,41 +378,37 @@ export default function KundliMatchingPage() {
           </div>
         </section>
 
-        {/* FINAL CTA */}
+        {/* FINAL CTA BANNER */}
         <section className="container">
           <div
             style={{
-              maxWidth: "800px",
+              maxWidth: "860px",
               margin: "0 auto",
               textAlign: "center",
-              padding: "3.5rem 2rem",
+              padding: "3.5rem 2.5rem",
               borderRadius: "24px",
-              background: "radial-gradient(circle at center, rgba(234, 179, 8, 0.15) 0%, rgba(10, 8, 3, 0.95) 100%)",
-              border: "1px solid rgba(234, 179, 8, 0.35)",
+              background: "linear-gradient(135deg, #fffbf0 0%, #fff7e0 50%, #fef3c7 100%)",
+              border: "1px solid rgba(217, 119, 6, 0.3)",
+              boxShadow: "0 20px 50px -12px rgba(217, 119, 6, 0.18)",
             }}
           >
-            <h2 style={{ fontFamily: "var(--font-outfit)", fontSize: "2.2rem", fontWeight: 700, marginBottom: "1rem" }}>
+            <h2 style={{ fontSize: "2.2rem", fontWeight: 700, marginBottom: "1rem", color: "var(--text-primary)" }}>
               Get Clear, Honest Guidance on Your Match
             </h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", maxWidth: "600px", margin: "0 auto 2rem auto" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", maxWidth: "620px", margin: "0 auto 2rem auto", lineHeight: 1.6 }}>
               Book your private 60-minute double-chart video consultation with Shubham Chhabra today.
             </p>
             <Link
               href="/#book"
-              className="btn-primary"
+              className="btn btn-primary"
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "1rem 2.5rem",
-                fontSize: "1.1rem",
+                padding: "0.9rem 2.5rem",
+                fontSize: "1.05rem",
                 fontWeight: 600,
-                textDecoration: "none",
-                borderRadius: "12px",
               }}
             >
               <span>Schedule Couple Consultation</span>
-              <ArrowRight size={20} />
+              <ArrowRight size={18} />
             </Link>
           </div>
         </section>

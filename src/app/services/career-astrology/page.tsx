@@ -159,45 +159,34 @@ export default function CareerAstrologyPage() {
         {/* HERO SECTION */}
         <section className="container" style={{ marginBottom: "4rem" }}>
           <div style={{ maxWidth: "860px", margin: "0 auto", textAlign: "center" }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "0.4rem 1rem",
-                borderRadius: "999px",
-                background: "rgba(234, 179, 8, 0.12)",
-                border: "1px solid rgba(234, 179, 8, 0.3)",
-                color: "var(--gold-primary)",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                marginBottom: "1.25rem",
-              }}
-            >
-              <Briefcase size={16} />
+            <div className="hero-badge" style={{ marginBottom: "1.25rem" }}>
+              <Briefcase size={14} />
               <span>Vedic Career Blueprint & Wealth Forecast</span>
             </div>
 
             <h1
               style={{
-                fontFamily: "var(--font-outfit)",
+                fontFamily: "var(--font-heading)",
                 fontSize: "clamp(2.2rem, 5vw, 3.4rem)",
-                fontWeight: 700,
-                lineHeight: 1.15,
+                fontWeight: 600,
+                lineHeight: 1.18,
                 marginBottom: "1.25rem",
                 letterSpacing: "-0.02em",
+                color: "var(--text-primary)",
               }}
             >
               Career Astrology & <br />
-              <span className="gold-text-gradient">Financial Growth Consultation</span>
+              <span className="gradient-text">Financial Growth Consultation</span>
             </h1>
 
             <p
               style={{
-                fontSize: "clamp(1.05rem, 2vw, 1.25rem)",
+                fontSize: "clamp(1.05rem, 2vw, 1.2rem)",
                 color: "var(--text-secondary)",
-                lineHeight: 1.6,
+                lineHeight: 1.7,
                 marginBottom: "2rem",
+                maxWidth: "760px",
+                margin: "0 auto 2rem auto",
               }}
             >
               Gain complete clarity on your career path, timing for job transitions, promotion cycles, business investments, and practical Lal Kitab remedies to remove workplace roadblocks with <strong>Shubham Chhabra</strong>.
@@ -206,16 +195,11 @@ export default function CareerAstrologyPage() {
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1rem", marginBottom: "2.5rem" }}>
               <Link
                 href="/#book"
-                className="btn-primary"
+                className="btn btn-primary"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "0.9rem 2rem",
-                  fontSize: "1.05rem",
+                  padding: "0.85rem 2.2rem",
+                  fontSize: "1rem",
                   fontWeight: 600,
-                  textDecoration: "none",
-                  borderRadius: "12px",
                 }}
               >
                 <span>Book Career Blueprint Session</span>
@@ -223,16 +207,11 @@ export default function CareerAstrologyPage() {
               </Link>
               <Link
                 href="/reviews"
-                className="btn-secondary"
+                className="btn btn-secondary"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "0.9rem 1.8rem",
-                  fontSize: "1.05rem",
+                  padding: "0.85rem 2rem",
+                  fontSize: "1rem",
                   fontWeight: 500,
-                  textDecoration: "none",
-                  borderRadius: "12px",
                 }}
               >
                 <span>Read Client Success Stories</span>
@@ -241,27 +220,25 @@ export default function CareerAstrologyPage() {
 
             {/* Trust Badges */}
             <div
+              className="glass-card"
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "1rem",
-                padding: "1.5rem",
-                borderRadius: "16px",
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid var(--border-color)",
+                gap: "1.5rem",
+                padding: "1.5rem 2rem",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", justifyContent: "center" }}>
                 <Clock size={20} style={{ color: "var(--gold-primary)" }} />
-                <span style={{ fontSize: "0.9rem" }}>45-Min Private Session</span>
+                <span style={{ fontSize: "0.95rem", fontWeight: 500, color: "var(--text-primary)" }}>45-Min Private Session</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", justifyContent: "center" }}>
                 <Globe size={20} style={{ color: "var(--gold-primary)" }} />
-                <span style={{ fontSize: "0.9rem" }}>Global NRI & India Timezones</span>
+                <span style={{ fontSize: "0.95rem", fontWeight: 500, color: "var(--text-primary)" }}>Global NRI & India Timezones</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", justifyContent: "center" }}>
                 <ShieldCheck size={20} style={{ color: "var(--gold-primary)" }} />
-                <span style={{ fontSize: "0.9rem" }}>Actionable Career Remedies</span>
+                <span style={{ fontSize: "0.95rem", fontWeight: 500, color: "var(--text-primary)" }}>Actionable Career Remedies</span>
               </div>
             </div>
           </div>
@@ -269,12 +246,13 @@ export default function CareerAstrologyPage() {
 
         {/* 4 PILLARS OF CAREER ASTROLOGY */}
         <section className="container" style={{ marginBottom: "5rem" }}>
-          <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+          <div style={{ maxWidth: "960px", margin: "0 auto" }}>
             <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-              <h2 style={{ fontFamily: "var(--font-outfit)", fontSize: "2.1rem", fontWeight: 700, marginBottom: "0.75rem" }}>
-                Comprehensive <span className="gold-text-gradient">Career Chart Analysis</span>
+              <div className="section-eyebrow">Astrological Methodology</div>
+              <h2 style={{ fontSize: "2.1rem", fontWeight: 600, marginBottom: "0.75rem" }}>
+                Comprehensive <span className="gradient-text">Career Chart Analysis</span>
               </h2>
-              <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", maxWidth: "650px", margin: "0 auto" }}>
                 How Vedic astrology decodes your Karma Bhava, wealth capacity, and professional timing.
               </p>
             </div>
@@ -285,11 +263,9 @@ export default function CareerAstrologyPage() {
                 return (
                   <div
                     key={idx}
+                    className="glass-card hover-lift"
                     style={{
                       padding: "1.75rem",
-                      borderRadius: "14px",
-                      background: "rgba(255, 255, 255, 0.02)",
-                      border: "1px solid var(--border-color)",
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.6rem" }}>
@@ -298,7 +274,7 @@ export default function CareerAstrologyPage() {
                         {pillar.title}
                       </h3>
                     </div>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: 1.5 }}>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: 1.6 }}>
                       {pillar.desc}
                     </p>
                   </div>
@@ -310,10 +286,13 @@ export default function CareerAstrologyPage() {
 
         {/* QUESTIONS ANSWERED */}
         <section className="container" style={{ marginBottom: "5rem" }}>
-          <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-            <h2 style={{ fontFamily: "var(--font-outfit)", fontSize: "2rem", fontWeight: 700, textAlign: "center", marginBottom: "2.5rem" }}>
-              Key Career Questions We Answer in Your Session
-            </h2>
+          <div style={{ maxWidth: "960px", margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+              <div className="section-eyebrow">Session Highlights</div>
+              <h2 style={{ fontSize: "2rem", fontWeight: 600 }}>
+                Key Career Questions We Answer in Your Session
+              </h2>
+            </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: "1.25rem" }}>
               {[
                 "When is the most auspicious time to switch jobs or negotiate a hike?",
@@ -325,18 +304,16 @@ export default function CareerAstrologyPage() {
               ].map((q, idx) => (
                 <div
                   key={idx}
+                  className="glass-card hover-lift"
                   style={{
                     padding: "1.25rem 1.5rem",
-                    borderRadius: "12px",
-                    background: "rgba(255, 255, 255, 0.02)",
-                    border: "1px solid var(--border-color)",
                     display: "flex",
                     alignItems: "center",
                     gap: "1rem",
                   }}
                 >
                   <HelpCircle size={22} style={{ color: "var(--gold-primary)", flexShrink: 0 }} />
-                  <span style={{ fontSize: "0.98rem", color: "var(--text-primary)", lineHeight: 1.4 }}>{q}</span>
+                  <span style={{ fontSize: "0.98rem", color: "var(--text-primary)", lineHeight: 1.5, fontWeight: 400 }}>{q}</span>
                 </div>
               ))}
             </div>
@@ -345,25 +322,26 @@ export default function CareerAstrologyPage() {
 
         {/* FAQ SECTION */}
         <section className="container" style={{ marginBottom: "5rem" }}>
-          <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-            <h2 style={{ fontFamily: "var(--font-outfit)", fontSize: "2rem", fontWeight: 700, textAlign: "center", marginBottom: "2.5rem" }}>
-              Frequently Asked Questions
-            </h2>
+          <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+              <div className="section-eyebrow">Got Questions?</div>
+              <h2 style={{ fontSize: "2rem", fontWeight: 600 }}>
+                Frequently Asked Questions
+              </h2>
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               {FAQS.map((item, idx) => (
                 <div
                   key={idx}
+                  className="glass-card"
                   style={{
-                    padding: "1.5rem 1.75rem",
-                    borderRadius: "14px",
-                    background: "rgba(255, 255, 255, 0.02)",
-                    border: "1px solid var(--border-color)",
+                    padding: "1.75rem 2rem",
                   }}
                 >
                   <h3 style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--gold-primary)", marginBottom: "0.6rem" }}>
                     {item.q}
                   </h3>
-                  <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6 }}>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.7 }}>
                     {item.a}
                   </p>
                 </div>
@@ -372,41 +350,37 @@ export default function CareerAstrologyPage() {
           </div>
         </section>
 
-        {/* FINAL CTA */}
+        {/* FINAL CTA BANNER */}
         <section className="container">
           <div
             style={{
-              maxWidth: "800px",
+              maxWidth: "860px",
               margin: "0 auto",
               textAlign: "center",
-              padding: "3.5rem 2rem",
+              padding: "3.5rem 2.5rem",
               borderRadius: "24px",
-              background: "radial-gradient(circle at center, rgba(234, 179, 8, 0.15) 0%, rgba(10, 8, 3, 0.95) 100%)",
-              border: "1px solid rgba(234, 179, 8, 0.35)",
+              background: "linear-gradient(135deg, #fffbf0 0%, #fff7e0 50%, #fef3c7 100%)",
+              border: "1px solid rgba(217, 119, 6, 0.3)",
+              boxShadow: "0 20px 50px -12px rgba(217, 119, 6, 0.18)",
             }}
           >
-            <h2 style={{ fontFamily: "var(--font-outfit)", fontSize: "2.2rem", fontWeight: 700, marginBottom: "1rem" }}>
+            <h2 style={{ fontSize: "2.2rem", fontWeight: 700, marginBottom: "1rem", color: "var(--text-primary)" }}>
               Step Confidently into Your Professional Future
             </h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", maxWidth: "600px", margin: "0 auto 2rem auto" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", maxWidth: "620px", margin: "0 auto 2rem auto", lineHeight: 1.6 }}>
               Book your private 1-on-1 Career Blueprint consultation with Shubham Chhabra on Google Meet.
             </p>
             <Link
               href="/#book"
-              className="btn-primary"
+              className="btn btn-primary"
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "1rem 2.5rem",
-                fontSize: "1.1rem",
+                padding: "0.9rem 2.5rem",
+                fontSize: "1.05rem",
                 fontWeight: 600,
-                textDecoration: "none",
-                borderRadius: "12px",
               }}
             >
               <span>Schedule Career Consultation</span>
-              <ArrowRight size={20} />
+              <ArrowRight size={18} />
             </Link>
           </div>
         </section>
