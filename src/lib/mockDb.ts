@@ -2,6 +2,8 @@
 // Used when the main database connection is refused (ECONNREFUSED) or unconfigured,
 // allowing the user to preview and test the booking funnel fully in development mode.
 
+import { INITIAL_TESTIMONIALS } from "@/lib/testimonialsData";
+
 export interface MockUser {
   id: string;
   name: string;
@@ -85,8 +87,16 @@ if (!globalForMocks.mockSlots) {
   globalForMocks.mockUsers = [];
 }
 
-if (!globalForMocks.mockTestimonials) {
-  globalForMocks.mockTestimonials = [];
+if (!globalForMocks.mockTestimonials || globalForMocks.mockTestimonials.length === 0) {
+  globalForMocks.mockTestimonials = INITIAL_TESTIMONIALS.map((t) => ({
+    id: t.id,
+    name: t.name,
+    role: t.role,
+    quote: t.quote,
+    rating: t.rating,
+    approved: t.approved,
+    createdAt: new Date(t.createdAt),
+  }));
 }
 
 export const mockDb = {

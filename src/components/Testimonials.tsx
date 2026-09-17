@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Star, Quote, Sparkles, ArrowRight, MessageSquarePlus } from "lucide-react";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import { INITIAL_TESTIMONIALS, type TestimonialItem } from "@/lib/testimonialsData";
 
 interface Testimonial {
   id: string;
@@ -30,8 +31,8 @@ function StarRating({ rating }: { rating: number }) {
 const MAX_HOMEPAGE_REVIEWS = 6;
 
 export default function Testimonials() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(INITIAL_TESTIMONIALS);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;

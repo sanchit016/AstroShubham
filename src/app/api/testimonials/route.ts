@@ -1,20 +1,36 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { mockDb } from "@/lib/mockDb";
+import { INITIAL_TESTIMONIALS } from "@/lib/testimonialsData";
 
 export async function GET() {
   try {
     try {
-      const testimonials = await db.testimonial.findMany({
+      const dbTestimonials = await db.testimonial.findMany({
         where: { approved: true },
         orderBy: { createdAt: "desc" },
       });
 
-      return NextResponse.json({ success: true, testimonials, source: "database" });
+      const dbIds = new Set(dbTestimonials.map((t) => t.id));
+      const dbQuotes = new Set(dbTestimonials.map((t) => t.quote.trim()));
+
+      const fallbackList = INITIAL_TESTIMONIALS.filter(
+        (it) => !dbIds.has(it.id) && !dbQuotes.has(it.quote.trim())
+      );
+
+      const combined = [...dbTestimonials, ...fallbackList];
+
+      return NextResponse.json({ success: true, testimonials: combined, source: "database_merged" });
     } catch (dbErr: any) {
-      console.warn("Database connection issue. Returning empty list:", dbErr?.message || dbErr);
+      console.warn("Database connection issue. Returning mockDb list:", dbErr?.message || dbErr);
       const testimonials = mockDb.getTestimonials();
-      return NextResponse.json({ success: true, testimonials, source: "mock_db", fallbackMode: true, dbError: dbErr?.message || String(dbErr) });
+      return NextResponse.json({
+        success: true,
+        testimonials,
+        source: "mock_db",
+        fallbackMode: true,
+        dbError: dbErr?.message || String(dbErr),
+      });
     }
   } catch (error: any) {
     console.error("General error in GET /api/testimonials:", error);

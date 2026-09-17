@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Star, Quote, Sparkles, CheckCircle2, AlertCircle, ArrowLeft, MessageSquarePlus } from "lucide-react";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import { INITIAL_TESTIMONIALS } from "@/lib/testimonialsData";
 
 interface Testimonial {
   id: string;
@@ -61,8 +62,8 @@ function StarPicker({ rating, onChange }: { rating: number; onChange: (value: nu
 const initialFormState = { name: "", role: "", quote: "", rating: 5 };
 
 export default function ReviewsPage() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(INITIAL_TESTIMONIALS);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState(initialFormState);
   const [submitting, setSubmitting] = useState(false);
