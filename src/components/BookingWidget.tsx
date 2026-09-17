@@ -5,6 +5,7 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Calendar as CalendarIcon, Clock, ArrowRight, Check, Sparkles, AlertCircle, Tag } from "lucide-react";
 import { PACKAGES, formatPrice, formatDiscountedPrice, getDiscountedPrice, validateCoupon, type PackageDefinition, type CurrencyCode } from "@/lib/pricing";
 import { useCurrency, setGlobalCurrency } from "@/lib/useCurrency";
+import { trackEvent } from "@/lib/analytics";
 
 const stepVariants: Variants = {
   enter: (direction: number) => ({ opacity: 0, x: direction > 0 ? 24 : -24 }),
@@ -289,6 +290,13 @@ export default function BookingWidget() {
         return;
       }
 
+      trackEvent("begin_checkout", {
+        item_name: selectedPackage.title,
+        package_id: selectedPackage.id,
+        value: getDiscountedPrice(selectedPackage, currency, appliedCoupon),
+        currency: currency,
+      });
+
       changeStep(4);
     }
   };
@@ -386,6 +394,13 @@ export default function BookingWidget() {
             });
             const verifyData = await verifyRes.json();
             if (verifyData.success) {
+              trackEvent("purchase", {
+                transaction_id: response.razorpay_payment_id,
+                item_name: selectedPackage.title,
+                package_id: selectedPackage.id,
+                value: getDiscountedPrice(selectedPackage, currency, appliedCoupon),
+                currency: currency,
+              });
               changeStep(5); // Success step!
             } else {
               setErrorMessage(verifyData.error || "Payment validation failed.");
@@ -441,6 +456,13 @@ export default function BookingWidget() {
               });
               const verifyData = await verifyRes.json();
               if (verifyData.success) {
+                trackEvent("purchase", {
+                  transaction_id: paypalOrder.orderId,
+                  item_name: selectedPackage.title,
+                  package_id: selectedPackage.id,
+                  value: getDiscountedPrice(selectedPackage, currency, appliedCoupon),
+                  currency: currency,
+                });
                 changeStep(5);
               } else {
                 setErrorMessage(verifyData.error || "Payment validation failed.");
